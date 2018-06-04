@@ -1,0 +1,11 @@
+
+
+include 'wxcrawler-common'
+
+include 'wxcrawler-domain'
+
+include 'wxcrawler-api'
+
+include 'wxcrawler-service'
+
+include 'wxcrawler-web-war'

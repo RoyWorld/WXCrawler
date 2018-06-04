@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.wxcrawler.dao.IWeixinDAO">
+
+
+    <sql id="Base_Column_List">
+        id as id ,
+        biz as biz ,
+        collect as collect 
+    </sql>
+
+	<!-- 列表对应的查询条件组合  -->
+  <sql id="queryOptions">
+       <where>
+           <if test="condition.id!=null">
+               <if test="condition.id__!=null">
+                   AND tb_weixin.${condition.id.field} ${condition.id.op} #{condition.id.data}
+               </if>
+               <if test="condition.id__==null"> AND tb_weixin.id = #{condition.id}</if>
+           </if>
+           <if test="condition.biz!=null">
+               <if test="condition.biz__!=null">
+                   AND tb_weixin.${condition.biz.field} ${condition.biz.op} #{condition.biz.data}
+               </if>
+               <if test="condition.biz__==null"> AND tb_weixin.biz = #{condition.biz}</if>
+           </if>
+           <if test="condition.collect!=null">
+               <if test="condition.collect__!=null">
+                   AND tb_weixin.${condition.collect.field} ${condition.collect.op} #{condition.collect.data}
+               </if>
+               <if test="condition.collect__==null"> AND tb_weixin.collect = #{condition.collect}</if>
+           </if>
+        </where>
+  </sql>
+
+   <sql id="queryOptions_like">
+       <where>
+		<if test="condition.id!=null">
+                AND id like CONCAT('%', #{condition.id} , '%')
+            </if>
+		<if test="condition.biz!=null">
+                AND biz like CONCAT('%', #{condition.biz} , '%')
+            </if>
+		<if test="condition.collect!=null">
+                AND collect like CONCAT('%', #{condition.collect} , '%')
+            </if>
+        </where>
+  </sql>
+
+
+  <sql id="queryOptions_opt">
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+            <if test="condition.id!=null">
+                AND id = #{condition.id}
+            </if>
+            <if test="condition.biz!=null">
+                AND biz = #{condition.biz}
+            </if>
+            <if test="condition.collect!=null">
+                AND collect = #{condition.collect}
+            </if>
+        </trim>
+  </sql>
+
+  <!-- 列表查询对应的排序选项  -->
+  <sql id="orderControl">
+       <if test="order!=null">
+		   	 <trim prefix="ORDER BY" suffixOverrides=",">
+						<if test="order.id!=null">
+						tb_weixin.id ${order.id},
+						</if>
+						<if test="order.biz!=null">
+						tb_weixin.biz ${order.biz},
+						</if>
+						<if test="order.collect!=null">
+						tb_weixin.collect ${order.collect},
+						</if>
+			</trim>
+		  
+	   </if>
+  </sql>
+
+    <insert id="insert" parameterType="Weixin">
+        INSERT INTO tb_weixin (
+				id,
+				biz,
+				collect
+        ) VALUES (
+        #{id},
+        #{biz},
+        #{collect}
+        )
+    </insert>
+
+    <!-- 更新 -->
+    <update id="update" parameterType="Weixin">
+        UPDATE tb_weixin
+		<set>
+         
+				biz = #{biz},
+				collect = #{collect}
+         
+		</set>
+		
+		<trim prefix="WHERE" suffixOverrides="and">
+			id = #{id} and
+		</trim>
+    </update>
+
+    <update id="updateByCondition">
+        UPDATE tb_weixin
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="update.biz!=null">
+                biz = #{update.biz},
+            </if>
+            <if test="update.collect!=null">
+                collect = #{update.collect},
+            </if>
+        </trim>
+        <include refid="queryOptions"/>
+    </update>
+
+
+    <insert id="insertByCondition" >
+        INSERT INTO tb_weixin (
+            <trim suffix="" suffixOverrides=",">
+                <if test="insert.id!=null">
+                    id,
+                </if>
+                <if test="insert.biz!=null">
+                    biz,
+                </if>
+                <if test="insert.collect!=null">
+                    collect
+                </if>
+            </trim>
+        ) VALUES (
+            <trim suffix="" suffixOverrides=",">
+                    <if test="insert.id!=null">
+                        #{insert.id},
+                    </if>
+                    <if test="insert.biz!=null">
+                        #{insert.biz},
+                    </if>
+                    <if test="insert.collect!=null">
+                        #{insert.collect}
+                    </if>
+            </trim>
+        )
+    </insert>
+
+
+    <update id="updateNull" parameterType="Weixin">
+        UPDATE tb_weixin
+        <trim prefix="SET" suffixOverrides=",">
+            biz = #{biz},
+            collect = #{collect},
+        </trim>
+        <include refid="queryOptions"/>
+    </update>
+
+
+    <delete id="deleteByCondition" parameterType="java.util.Map">
+        DELETE FROM tb_weixin
+        <include refid="queryOptions"/>
+    </delete>
+
+    <select id="queryOne" parameterType="java.util.Map" resultType="Weixin">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM tb_weixin
+		<include refid="queryOptions"/>
+		<include refid="orderControl"/>
+        LIMIT 0,1
+    </select>
+
+    <select id="queryList" resultType="Weixin">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM tb_weixin
+        <include refid="queryOptions"/>
+		<include refid="orderControl"/>
+    </select>
+
+
+    <select id="queryPage" resultType="Weixin">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM tb_weixin
+       <include refid="queryOptions" />
+
+        <include refid="orderControl"/>
+
+        <if test="offset!=null">
+            limit ${offset}, ${rows}
+        </if>
+    </select>
+
+    <select id="likePage" parameterType="java.util.Map" resultType="Weixin">
+        SELECT
+       
+            <include refid="Base_Column_List" />
+        FROM tb_weixin
+        <include refid="queryOptions_like" />
+        <include refid="orderControl" />
+		<if test="offset!=null">
+            limit ${offset}, ${rows}
+        </if>
+    </select>
+
+
+    <select id="count" resultType="java.lang.Integer">
+        SELECT count(id) FROM tb_weixin
+       <include refid="queryOptions_opt" />
+    </select>
+
+
+</mapper>
+

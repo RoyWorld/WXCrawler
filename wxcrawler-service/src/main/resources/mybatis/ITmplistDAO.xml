@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.wxcrawler.dao.ITmplistDAO">
+
+
+    <sql id="Base_Column_List">
+        id as id ,
+        content_url as contentUrl ,
+        load as load 
+    </sql>
+
+	<!-- 列表对应的查询条件组合  -->
+  <sql id="queryOptions">
+       <where>
+           <if test="condition.id!=null">
+               <if test="condition.id__!=null">
+                   AND tb_tmplist.${condition.id.field} ${condition.id.op} #{condition.id.data}
+               </if>
+               <if test="condition.id__==null"> AND tb_tmplist.id = #{condition.id}</if>
+           </if>
+           <if test="condition.content_url!=null">
+               <if test="condition.content_url__!=null">
+                   AND tb_tmplist.${condition.content_url.field} ${condition.content_url.op} #{condition.contentUrl.data}
+               </if>
+               <if test="condition.content_url__==null"> AND tb_tmplist.content_url = #{condition.contentUrl}</if>
+           </if>
+           <if test="condition.load!=null">
+               <if test="condition.load__!=null">
+                   AND tb_tmplist.${condition.load.field} ${condition.load.op} #{condition.load.data}
+               </if>
+               <if test="condition.load__==null"> AND tb_tmplist.load = #{condition.load}</if>
+           </if>
+        </where>
+  </sql>
+
+   <sql id="queryOptions_like">
+       <where>
+		<if test="condition.id!=null">
+                AND id like CONCAT('%', #{condition.id} , '%')
+            </if>
+		<if test="condition.contentUrl!=null">
+                AND content_url like CONCAT('%', #{condition.contentUrl} , '%')
+            </if>
+		<if test="condition.load!=null">
+                AND load like CONCAT('%', #{condition.load} , '%')
+            </if>
+        </where>
+  </sql>
+
+
+  <sql id="queryOptions_opt">
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+            <if test="condition.id!=null">
+                AND id = #{condition.id}
+            </if>
+            <if test="condition.contentUrl!=null">
+                AND content_url = #{condition.contentUrl}
+            </if>
+            <if test="condition.load!=null">
+                AND load = #{condition.load}
+            </if>
+        </trim>
+  </sql>
+
+  <!-- 列表查询对应的排序选项  -->
+  <sql id="orderControl">
+       <if test="order!=null">
+		   	 <trim prefix="ORDER BY" suffixOverrides=",">
+						<if test="order.id!=null">
+						tb_tmplist.id ${order.id},
+						</if>
+						<if test="order.contentUrl!=null">
+						tb_tmplist.content_url ${order.contentUrl},
+						</if>
+						<if test="order.load!=null">
+						tb_tmplist.load ${order.load},
+						</if>
+			</trim>
+		  
+	   </if>
+  </sql>
+
+    <insert id="insert" parameterType="Tmplist">
+        INSERT INTO tb_tmplist (
+				id,
+				content_url,
+				load
+        ) VALUES (
+        #{id},
+        #{contentUrl},
+        #{load}
+        )
+    </insert>
+
+    <!-- 更新 -->
+    <update id="update" parameterType="Tmplist">
+        UPDATE tb_tmplist
+		<set>
+         
+				content_url = #{contentUrl},
+				load = #{load}
+         
+		</set>
+		
+		<trim prefix="WHERE" suffixOverrides="and">
+			id = #{id} and
+		</trim>
+    </update>
+
+    <update id="updateByCondition">
+        UPDATE tb_tmplist
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="update.contentUrl!=null">
+                content_url = #{update.contentUrl},
+            </if>
+            <if test="update.load!=null">
+                load = #{update.load},
+            </if>
+        </trim>
+        <include refid="queryOptions"/>
+    </update>
+
+
+    <insert id="insertByCondition" >
+        INSERT INTO tb_tmplist (
+            <trim suffix="" suffixOverrides=",">
+                <if test="insert.id!=null">
+                    id,
+                </if>
+                <if test="insert.contentUrl!=null">
+                    content_url,
+                </if>
+                <if test="insert.load!=null">
+                    load
+                </if>
+            </trim>
+        ) VALUES (
+            <trim suffix="" suffixOverrides=",">
+                    <if test="insert.id!=null">
+                        #{insert.id},
+                    </if>
+                    <if test="insert.contentUrl!=null">
+                        #{insert.contentUrl},
+                    </if>
+                    <if test="insert.load!=null">
+                        #{insert.load}
+                    </if>
+            </trim>
+        )
+    </insert>
+
+
+    <update id="updateNull" parameterType="Tmplist">
+        UPDATE tb_tmplist
+        <trim prefix="SET" suffixOverrides=",">
+            content_url = #{contentUrl},
+            load = #{load},
+        </trim>
+        <include refid="queryOptions"/>
+    </update>
+
+
+    <delete id="deleteByCondition" parameterType="java.util.Map">
+        DELETE FROM tb_tmplist
+        <include refid="queryOptions"/>
+    </delete>
+
+    <select id="queryOne" parameterType="java.util.Map" resultType="Tmplist">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM tb_tmplist
+		<include refid="queryOptions"/>
+		<include refid="orderControl"/>
+        LIMIT 0,1
+    </select>
+
+    <select id="queryList" resultType="Tmplist">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM tb_tmplist
+        <include refid="queryOptions"/>
+		<include refid="orderControl"/>
+    </select>
+
+
+    <select id="queryPage" resultType="Tmplist">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM tb_tmplist
+       <include refid="queryOptions" />
+
+        <include refid="orderControl"/>
+
+        <if test="offset!=null">
+            limit ${offset}, ${rows}
+        </if>
+    </select>
+
+    <select id="likePage" parameterType="java.util.Map" resultType="Tmplist">
+        SELECT
+       
+            <include refid="Base_Column_List" />
+        FROM tb_tmplist
+        <include refid="queryOptions_like" />
+        <include refid="orderControl" />
+		<if test="offset!=null">
+            limit ${offset}, ${rows}
+        </if>
+    </select>
+
+
+    <select id="count" resultType="java.lang.Integer">
+        SELECT count(id) FROM tb_tmplist
+       <include refid="queryOptions_opt" />
+    </select>
+
+
+</mapper>
+

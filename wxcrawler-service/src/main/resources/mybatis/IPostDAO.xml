@@ -1,0 +1,540 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.wxcrawler.dao.IPostDAO">
+
+
+    <sql id="Base_Column_List">
+        id as id ,
+        biz as biz ,
+        field_id as fieldId ,
+        title as title ,
+        title_encode as titleEncode ,
+        digest as digest ,
+        content_url as contentUrl ,
+        source_url as sourceUrl ,
+        cover as cover ,
+        is_multi as isMulti ,
+        is_top as isTop ,
+        datetime as datetime ,
+        readNum as readNum ,
+        likeNum as likeNum 
+    </sql>
+
+	<!-- 列表对应的查询条件组合  -->
+  <sql id="queryOptions">
+       <where>
+           <if test="condition.id!=null">
+               <if test="condition.id__!=null">
+                   AND tb_post.${condition.id.field} ${condition.id.op} #{condition.id.data}
+               </if>
+               <if test="condition.id__==null"> AND tb_post.id = #{condition.id}</if>
+           </if>
+           <if test="condition.biz!=null">
+               <if test="condition.biz__!=null">
+                   AND tb_post.${condition.biz.field} ${condition.biz.op} #{condition.biz.data}
+               </if>
+               <if test="condition.biz__==null"> AND tb_post.biz = #{condition.biz}</if>
+           </if>
+           <if test="condition.field_id!=null">
+               <if test="condition.field_id__!=null">
+                   AND tb_post.${condition.field_id.field} ${condition.field_id.op} #{condition.fieldId.data}
+               </if>
+               <if test="condition.field_id__==null"> AND tb_post.field_id = #{condition.fieldId}</if>
+           </if>
+           <if test="condition.title!=null">
+               <if test="condition.title__!=null">
+                   AND tb_post.${condition.title.field} ${condition.title.op} #{condition.title.data}
+               </if>
+               <if test="condition.title__==null"> AND tb_post.title = #{condition.title}</if>
+           </if>
+           <if test="condition.title_encode!=null">
+               <if test="condition.title_encode__!=null">
+                   AND tb_post.${condition.title_encode.field} ${condition.title_encode.op} #{condition.titleEncode.data}
+               </if>
+               <if test="condition.title_encode__==null"> AND tb_post.title_encode = #{condition.titleEncode}</if>
+           </if>
+           <if test="condition.digest!=null">
+               <if test="condition.digest__!=null">
+                   AND tb_post.${condition.digest.field} ${condition.digest.op} #{condition.digest.data}
+               </if>
+               <if test="condition.digest__==null"> AND tb_post.digest = #{condition.digest}</if>
+           </if>
+           <if test="condition.content_url!=null">
+               <if test="condition.content_url__!=null">
+                   AND tb_post.${condition.content_url.field} ${condition.content_url.op} #{condition.contentUrl.data}
+               </if>
+               <if test="condition.content_url__==null"> AND tb_post.content_url = #{condition.contentUrl}</if>
+           </if>
+           <if test="condition.source_url!=null">
+               <if test="condition.source_url__!=null">
+                   AND tb_post.${condition.source_url.field} ${condition.source_url.op} #{condition.sourceUrl.data}
+               </if>
+               <if test="condition.source_url__==null"> AND tb_post.source_url = #{condition.sourceUrl}</if>
+           </if>
+           <if test="condition.cover!=null">
+               <if test="condition.cover__!=null">
+                   AND tb_post.${condition.cover.field} ${condition.cover.op} #{condition.cover.data}
+               </if>
+               <if test="condition.cover__==null"> AND tb_post.cover = #{condition.cover}</if>
+           </if>
+           <if test="condition.is_multi!=null">
+               <if test="condition.is_multi__!=null">
+                   AND tb_post.${condition.is_multi.field} ${condition.is_multi.op} #{condition.isMulti.data}
+               </if>
+               <if test="condition.is_multi__==null"> AND tb_post.is_multi = #{condition.isMulti}</if>
+           </if>
+           <if test="condition.is_top!=null">
+               <if test="condition.is_top__!=null">
+                   AND tb_post.${condition.is_top.field} ${condition.is_top.op} #{condition.isTop.data}
+               </if>
+               <if test="condition.is_top__==null"> AND tb_post.is_top = #{condition.isTop}</if>
+           </if>
+           <if test="condition.datetime!=null">
+               <if test="condition.datetime__!=null">
+                   AND tb_post.${condition.datetime.field} ${condition.datetime.op} #{condition.datetime.data}
+               </if>
+               <if test="condition.datetime__==null"> AND tb_post.datetime = #{condition.datetime}</if>
+           </if>
+           <if test="condition.readNum!=null">
+               <if test="condition.readNum__!=null">
+                   AND tb_post.${condition.readNum.field} ${condition.readNum.op} #{condition.readNum.data}
+               </if>
+               <if test="condition.readNum__==null"> AND tb_post.readNum = #{condition.readNum}</if>
+           </if>
+           <if test="condition.likeNum!=null">
+               <if test="condition.likeNum__!=null">
+                   AND tb_post.${condition.likeNum.field} ${condition.likeNum.op} #{condition.likeNum.data}
+               </if>
+               <if test="condition.likeNum__==null"> AND tb_post.likeNum = #{condition.likeNum}</if>
+           </if>
+        </where>
+  </sql>
+
+   <sql id="queryOptions_like">
+       <where>
+		<if test="condition.id!=null">
+                AND id like CONCAT('%', #{condition.id} , '%')
+            </if>
+		<if test="condition.biz!=null">
+                AND biz like CONCAT('%', #{condition.biz} , '%')
+            </if>
+		<if test="condition.fieldId!=null">
+                AND field_id like CONCAT('%', #{condition.fieldId} , '%')
+            </if>
+		<if test="condition.title!=null">
+                AND title like CONCAT('%', #{condition.title} , '%')
+            </if>
+		<if test="condition.titleEncode!=null">
+                AND title_encode like CONCAT('%', #{condition.titleEncode} , '%')
+            </if>
+		<if test="condition.digest!=null">
+                AND digest like CONCAT('%', #{condition.digest} , '%')
+            </if>
+		<if test="condition.contentUrl!=null">
+                AND content_url like CONCAT('%', #{condition.contentUrl} , '%')
+            </if>
+		<if test="condition.sourceUrl!=null">
+                AND source_url like CONCAT('%', #{condition.sourceUrl} , '%')
+            </if>
+		<if test="condition.cover!=null">
+                AND cover like CONCAT('%', #{condition.cover} , '%')
+            </if>
+		<if test="condition.isMulti!=null">
+                AND is_multi like CONCAT('%', #{condition.isMulti} , '%')
+            </if>
+		<if test="condition.isTop!=null">
+                AND is_top like CONCAT('%', #{condition.isTop} , '%')
+            </if>
+		<if test="condition.datetime!=null">
+                AND datetime like CONCAT('%', #{condition.datetime} , '%')
+            </if>
+		<if test="condition.readNum!=null">
+                AND readNum like CONCAT('%', #{condition.readNum} , '%')
+            </if>
+		<if test="condition.likeNum!=null">
+                AND likeNum like CONCAT('%', #{condition.likeNum} , '%')
+            </if>
+        </where>
+  </sql>
+
+
+  <sql id="queryOptions_opt">
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+            <if test="condition.id!=null">
+                AND id = #{condition.id}
+            </if>
+            <if test="condition.biz!=null">
+                AND biz = #{condition.biz}
+            </if>
+            <if test="condition.fieldId!=null">
+                AND field_id = #{condition.fieldId}
+            </if>
+            <if test="condition.title!=null">
+                AND title = #{condition.title}
+            </if>
+            <if test="condition.titleEncode!=null">
+                AND title_encode = #{condition.titleEncode}
+            </if>
+            <if test="condition.digest!=null">
+                AND digest = #{condition.digest}
+            </if>
+            <if test="condition.contentUrl!=null">
+                AND content_url = #{condition.contentUrl}
+            </if>
+            <if test="condition.sourceUrl!=null">
+                AND source_url = #{condition.sourceUrl}
+            </if>
+            <if test="condition.cover!=null">
+                AND cover = #{condition.cover}
+            </if>
+            <if test="condition.isMulti!=null">
+                AND is_multi = #{condition.isMulti}
+            </if>
+            <if test="condition.isTop!=null">
+                AND is_top = #{condition.isTop}
+            </if>
+            <if test="condition.datetime!=null">
+                AND datetime = #{condition.datetime}
+            </if>
+            <if test="condition.readNum!=null">
+                AND readNum = #{condition.readNum}
+            </if>
+            <if test="condition.likeNum!=null">
+                AND likeNum = #{condition.likeNum}
+            </if>
+        </trim>
+  </sql>
+
+  <!-- 列表查询对应的排序选项  -->
+  <sql id="orderControl">
+       <if test="order!=null">
+		   	 <trim prefix="ORDER BY" suffixOverrides=",">
+						<if test="order.id!=null">
+						tb_post.id ${order.id},
+						</if>
+						<if test="order.biz!=null">
+						tb_post.biz ${order.biz},
+						</if>
+						<if test="order.fieldId!=null">
+						tb_post.field_id ${order.fieldId},
+						</if>
+						<if test="order.title!=null">
+						tb_post.title ${order.title},
+						</if>
+						<if test="order.titleEncode!=null">
+						tb_post.title_encode ${order.titleEncode},
+						</if>
+						<if test="order.digest!=null">
+						tb_post.digest ${order.digest},
+						</if>
+						<if test="order.contentUrl!=null">
+						tb_post.content_url ${order.contentUrl},
+						</if>
+						<if test="order.sourceUrl!=null">
+						tb_post.source_url ${order.sourceUrl},
+						</if>
+						<if test="order.cover!=null">
+						tb_post.cover ${order.cover},
+						</if>
+						<if test="order.isMulti!=null">
+						tb_post.is_multi ${order.isMulti},
+						</if>
+						<if test="order.isTop!=null">
+						tb_post.is_top ${order.isTop},
+						</if>
+						<if test="order.datetime!=null">
+						tb_post.datetime ${order.datetime},
+						</if>
+						<if test="order.readNum!=null">
+						tb_post.readNum ${order.readNum},
+						</if>
+						<if test="order.likeNum!=null">
+						tb_post.likeNum ${order.likeNum},
+						</if>
+			</trim>
+		  
+	   </if>
+  </sql>
+
+    <insert id="insert" parameterType="Post">
+        INSERT INTO tb_post (
+				id,
+				biz,
+				field_id,
+				title,
+				title_encode,
+				digest,
+				content_url,
+				source_url,
+				cover,
+				is_multi,
+				is_top,
+				datetime,
+				readNum,
+				likeNum
+        ) VALUES (
+        #{id},
+        #{biz},
+        #{fieldId},
+        #{title},
+        #{titleEncode},
+        #{digest},
+        #{contentUrl},
+        #{sourceUrl},
+        #{cover},
+        #{isMulti},
+        #{isTop},
+        #{datetime},
+        #{readNum},
+        #{likeNum}
+        )
+    </insert>
+
+    <!-- 更新 -->
+    <update id="update" parameterType="Post">
+        UPDATE tb_post
+		<set>
+         
+				biz = #{biz},
+				field_id = #{fieldId},
+				title = #{title},
+				title_encode = #{titleEncode},
+				digest = #{digest},
+				content_url = #{contentUrl},
+				source_url = #{sourceUrl},
+				cover = #{cover},
+				is_multi = #{isMulti},
+				is_top = #{isTop},
+				datetime = #{datetime},
+				readNum = #{readNum},
+				likeNum = #{likeNum}
+         
+		</set>
+		
+		<trim prefix="WHERE" suffixOverrides="and">
+			id = #{id} and
+		</trim>
+    </update>
+
+    <update id="updateByCondition">
+        UPDATE tb_post
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="update.biz!=null">
+                biz = #{update.biz},
+            </if>
+            <if test="update.fieldId!=null">
+                field_id = #{update.fieldId},
+            </if>
+            <if test="update.title!=null">
+                title = #{update.title},
+            </if>
+            <if test="update.titleEncode!=null">
+                title_encode = #{update.titleEncode},
+            </if>
+            <if test="update.digest!=null">
+                digest = #{update.digest},
+            </if>
+            <if test="update.contentUrl!=null">
+                content_url = #{update.contentUrl},
+            </if>
+            <if test="update.sourceUrl!=null">
+                source_url = #{update.sourceUrl},
+            </if>
+            <if test="update.cover!=null">
+                cover = #{update.cover},
+            </if>
+            <if test="update.isMulti!=null">
+                is_multi = #{update.isMulti},
+            </if>
+            <if test="update.isTop!=null">
+                is_top = #{update.isTop},
+            </if>
+            <if test="update.datetime!=null">
+                datetime = #{update.datetime},
+            </if>
+            <if test="update.readNum!=null">
+                readNum = #{update.readNum},
+            </if>
+            <if test="update.likeNum!=null">
+                likeNum = #{update.likeNum},
+            </if>
+        </trim>
+        <include refid="queryOptions"/>
+    </update>
+
+
+    <insert id="insertByCondition" >
+        INSERT INTO tb_post (
+            <trim suffix="" suffixOverrides=",">
+                <if test="insert.id!=null">
+                    id,
+                </if>
+                <if test="insert.biz!=null">
+                    biz,
+                </if>
+                <if test="insert.fieldId!=null">
+                    field_id,
+                </if>
+                <if test="insert.title!=null">
+                    title,
+                </if>
+                <if test="insert.titleEncode!=null">
+                    title_encode,
+                </if>
+                <if test="insert.digest!=null">
+                    digest,
+                </if>
+                <if test="insert.contentUrl!=null">
+                    content_url,
+                </if>
+                <if test="insert.sourceUrl!=null">
+                    source_url,
+                </if>
+                <if test="insert.cover!=null">
+                    cover,
+                </if>
+                <if test="insert.isMulti!=null">
+                    is_multi,
+                </if>
+                <if test="insert.isTop!=null">
+                    is_top,
+                </if>
+                <if test="insert.datetime!=null">
+                    datetime,
+                </if>
+                <if test="insert.readNum!=null">
+                    readNum,
+                </if>
+                <if test="insert.likeNum!=null">
+                    likeNum
+                </if>
+            </trim>
+        ) VALUES (
+            <trim suffix="" suffixOverrides=",">
+                    <if test="insert.id!=null">
+                        #{insert.id},
+                    </if>
+                    <if test="insert.biz!=null">
+                        #{insert.biz},
+                    </if>
+                    <if test="insert.fieldId!=null">
+                        #{insert.fieldId},
+                    </if>
+                    <if test="insert.title!=null">
+                        #{insert.title},
+                    </if>
+                    <if test="insert.titleEncode!=null">
+                        #{insert.titleEncode},
+                    </if>
+                    <if test="insert.digest!=null">
+                        #{insert.digest},
+                    </if>
+                    <if test="insert.contentUrl!=null">
+                        #{insert.contentUrl},
+                    </if>
+                    <if test="insert.sourceUrl!=null">
+                        #{insert.sourceUrl},
+                    </if>
+                    <if test="insert.cover!=null">
+                        #{insert.cover},
+                    </if>
+                    <if test="insert.isMulti!=null">
+                        #{insert.isMulti},
+                    </if>
+                    <if test="insert.isTop!=null">
+                        #{insert.isTop},
+                    </if>
+                    <if test="insert.datetime!=null">
+                        #{insert.datetime},
+                    </if>
+                    <if test="insert.readNum!=null">
+                        #{insert.readNum},
+                    </if>
+                    <if test="insert.likeNum!=null">
+                        #{insert.likeNum}
+                    </if>
+            </trim>
+        )
+    </insert>
+
+
+    <update id="update" parameterType="Post">
+        UPDATE tb_post
+        <trim prefix="SET" suffixOverrides=",">
+            biz = #{biz},
+            field_id = #{fieldId},
+            title = #{title},
+            title_encode = #{titleEncode},
+            digest = #{digest},
+            content_url = #{contentUrl},
+            source_url = #{sourceUrl},
+            cover = #{cover},
+            is_multi = #{isMulti},
+            is_top = #{isTop},
+            datetime = #{datetime},
+            readNum = #{readNum},
+            likeNum = #{likeNum},
+        </trim>
+        <include refid="queryOptions"/>
+    </update>
+
+
+    <delete id="deleteByCondition" parameterType="java.util.Map">
+        DELETE FROM tb_post
+        <include refid="queryOptions"/>
+    </delete>
+
+    <select id="queryOne" parameterType="java.util.Map" resultType="Post">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM tb_post
+		<include refid="queryOptions"/>
+		<include refid="orderControl"/>
+        LIMIT 0,1
+    </select>
+
+    <select id="queryList" resultType="Post">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM tb_post
+        <include refid="queryOptions"/>
+		<include refid="orderControl"/>
+    </select>
+
+
+    <select id="queryPage" resultType="Post">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM tb_post
+       <include refid="queryOptions" />
+
+        <include refid="orderControl"/>
+
+        <if test="offset!=null">
+            limit ${offset}, ${rows}
+        </if>
+    </select>
+
+    <select id="likePage" parameterType="java.util.Map" resultType="Post">
+        SELECT
+       
+            <include refid="Base_Column_List" />
+        FROM tb_post
+        <include refid="queryOptions_like" />
+        <include refid="orderControl" />
+		<if test="offset!=null">
+            limit ${offset}, ${rows}
+        </if>
+    </select>
+
+
+    <select id="count" resultType="java.lang.Integer">
+        SELECT count(id) FROM tb_post
+       <include refid="queryOptions_opt" />
+    </select>
+
+
+</mapper>
+
