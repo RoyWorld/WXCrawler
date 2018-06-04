@@ -2,7 +2,7 @@
  * Copyright (c) 2013-2014, thinkjoy Inc. All Rights Reserved.
  *
  * Project Name: wxcrawler
- * $Id:  Weixin.java 2018-05-31 10:45:16 $
+ * $Id:  Weixin.java 2018-06-04 16:00:59 $
  */
 
 
@@ -29,6 +29,14 @@ public class Weixin extends MyBaseDomain<Integer>{
 
     /** 公众号唯一标识biz */
     private String biz;
+
+
+    /** 公众号昵称 */
+    private String nickName;
+
+
+    /** 公众号头像 */
+    private String headImg;
 
 
     /** 记录采集时间的时间戳 */
@@ -68,6 +76,36 @@ public class Weixin extends MyBaseDomain<Integer>{
     }
 
 	/**
+	 *公众号昵称
+	 * @param value
+	 */
+	public void setNickName(String value) {
+        this.nickName = value;
+    }
+	/**
+	 *公众号昵称
+	 * @return
+	 */
+    public String getNickName() {
+        return this.nickName;
+    }
+
+	/**
+	 *公众号头像
+	 * @param value
+	 */
+	public void setHeadImg(String value) {
+        this.headImg = value;
+    }
+	/**
+	 *公众号头像
+	 * @return
+	 */
+    public String getHeadImg() {
+        return this.headImg;
+    }
+
+	/**
 	 *记录采集时间的时间戳
 	 * @param value
 	 */
@@ -87,6 +125,8 @@ public class Weixin extends MyBaseDomain<Integer>{
 		return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
 			.append("Id",getId())
 			.append("Biz",getBiz())
+			.append("NickName",getNickName())
+			.append("HeadImg",getHeadImg())
 			.append("Collect",getCollect())
 			.toString();
 	}

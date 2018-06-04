@@ -314,7 +314,7 @@
 		</set>
 		
 		<trim prefix="WHERE" suffixOverrides="and">
-			id = #{id} and
+			id = #{id}
 		</trim>
     </update>
 
@@ -458,27 +458,6 @@
             </trim>
         )
     </insert>
-
-
-    <update id="update" parameterType="Post">
-        UPDATE tb_post
-        <trim prefix="SET" suffixOverrides=",">
-            biz = #{biz},
-            field_id = #{fieldId},
-            title = #{title},
-            title_encode = #{titleEncode},
-            digest = #{digest},
-            content_url = #{contentUrl},
-            source_url = #{sourceUrl},
-            cover = #{cover},
-            is_multi = #{isMulti},
-            is_top = #{isTop},
-            datetime = #{datetime},
-            readNum = #{readNum},
-            likeNum = #{likeNum},
-        </trim>
-        <include refid="queryOptions"/>
-    </update>
 
 
     <delete id="deleteByCondition" parameterType="java.util.Map">

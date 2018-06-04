@@ -105,7 +105,7 @@
 		</set>
 		
 		<trim prefix="WHERE" suffixOverrides="and">
-			id = #{id} and
+			id = #{id}
 		</trim>
     </update>
 
@@ -150,16 +150,6 @@
             </trim>
         )
     </insert>
-
-
-    <update id="updateNull" parameterType="Tmplist">
-        UPDATE tb_tmplist
-        <trim prefix="SET" suffixOverrides=",">
-            content_url = #{contentUrl},
-            load = #{load},
-        </trim>
-        <include refid="queryOptions"/>
-    </update>
 
 
     <delete id="deleteByCondition" parameterType="java.util.Map">

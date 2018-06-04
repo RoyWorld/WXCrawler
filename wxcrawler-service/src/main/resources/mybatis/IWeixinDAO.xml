@@ -8,6 +8,8 @@
     <sql id="Base_Column_List">
         id as id ,
         biz as biz ,
+        nickName as nickName ,
+        headImg as headImg ,
         collect as collect 
     </sql>
 
@@ -26,6 +28,18 @@
                </if>
                <if test="condition.biz__==null"> AND tb_weixin.biz = #{condition.biz}</if>
            </if>
+           <if test="condition.nickName!=null">
+               <if test="condition.nickName__!=null">
+                   AND tb_weixin.${condition.nickName.field} ${condition.nickName.op} #{condition.nickName.data}
+               </if>
+               <if test="condition.nickName__==null"> AND tb_weixin.nickName = #{condition.nickName}</if>
+           </if>
+           <if test="condition.headImg!=null">
+               <if test="condition.headImg__!=null">
+                   AND tb_weixin.${condition.headImg.field} ${condition.headImg.op} #{condition.headImg.data}
+               </if>
+               <if test="condition.headImg__==null"> AND tb_weixin.headImg = #{condition.headImg}</if>
+           </if>
            <if test="condition.collect!=null">
                <if test="condition.collect__!=null">
                    AND tb_weixin.${condition.collect.field} ${condition.collect.op} #{condition.collect.data}
@@ -43,6 +57,12 @@
 		<if test="condition.biz!=null">
                 AND biz like CONCAT('%', #{condition.biz} , '%')
             </if>
+		<if test="condition.nickName!=null">
+                AND nickName like CONCAT('%', #{condition.nickName} , '%')
+            </if>
+		<if test="condition.headImg!=null">
+                AND headImg like CONCAT('%', #{condition.headImg} , '%')
+            </if>
 		<if test="condition.collect!=null">
                 AND collect like CONCAT('%', #{condition.collect} , '%')
             </if>
@@ -57,6 +77,12 @@
             </if>
             <if test="condition.biz!=null">
                 AND biz = #{condition.biz}
+            </if>
+            <if test="condition.nickName!=null">
+                AND nickName = #{condition.nickName}
+            </if>
+            <if test="condition.headImg!=null">
+                AND headImg = #{condition.headImg}
             </if>
             <if test="condition.collect!=null">
                 AND collect = #{condition.collect}
@@ -74,6 +100,12 @@
 						<if test="order.biz!=null">
 						tb_weixin.biz ${order.biz},
 						</if>
+						<if test="order.nickName!=null">
+						tb_weixin.nickName ${order.nickName},
+						</if>
+						<if test="order.headImg!=null">
+						tb_weixin.headImg ${order.headImg},
+						</if>
 						<if test="order.collect!=null">
 						tb_weixin.collect ${order.collect},
 						</if>
@@ -86,10 +118,14 @@
         INSERT INTO tb_weixin (
 				id,
 				biz,
+				nickName,
+				headImg,
 				collect
         ) VALUES (
         #{id},
         #{biz},
+        #{nickName},
+        #{headImg},
         #{collect}
         )
     </insert>
@@ -100,12 +136,14 @@
 		<set>
          
 				biz = #{biz},
+				nickName = #{nickName},
+				headImg = #{headImg},
 				collect = #{collect}
          
 		</set>
 		
 		<trim prefix="WHERE" suffixOverrides="and">
-			id = #{id} and
+			id = #{id}
 		</trim>
     </update>
 
@@ -114,6 +152,12 @@
         <trim prefix="SET" suffixOverrides=",">
             <if test="update.biz!=null">
                 biz = #{update.biz},
+            </if>
+            <if test="update.nickName!=null">
+                nickName = #{update.nickName},
+            </if>
+            <if test="update.headImg!=null">
+                headImg = #{update.headImg},
             </if>
             <if test="update.collect!=null">
                 collect = #{update.collect},
@@ -132,6 +176,12 @@
                 <if test="insert.biz!=null">
                     biz,
                 </if>
+                <if test="insert.nickName!=null">
+                    nickName,
+                </if>
+                <if test="insert.headImg!=null">
+                    headImg,
+                </if>
                 <if test="insert.collect!=null">
                     collect
                 </if>
@@ -144,22 +194,18 @@
                     <if test="insert.biz!=null">
                         #{insert.biz},
                     </if>
+                    <if test="insert.nickName!=null">
+                        #{insert.nickName},
+                    </if>
+                    <if test="insert.headImg!=null">
+                        #{insert.headImg},
+                    </if>
                     <if test="insert.collect!=null">
                         #{insert.collect}
                     </if>
             </trim>
         )
     </insert>
-
-
-    <update id="updateNull" parameterType="Weixin">
-        UPDATE tb_weixin
-        <trim prefix="SET" suffixOverrides=",">
-            biz = #{biz},
-            collect = #{collect},
-        </trim>
-        <include refid="queryOptions"/>
-    </update>
 
 
     <delete id="deleteByCondition" parameterType="java.util.Map">
