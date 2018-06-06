@@ -122,5 +122,7 @@
         <!--<constructor-arg ref="shardingRule"/>-->
     <!--</bean>-->
 
+    <context:component-scan base-package="com.wxcrawler"/>
 
+    <import resource="classpath:spring-quartz.xml"/>
 </beans>
