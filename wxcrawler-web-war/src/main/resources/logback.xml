@@ -107,7 +107,7 @@
         <appender-ref ref="STDOUT-APPENDER"/>
     </logger>
 
-    <logger name="org.mortbay" level="INFO">
+    <logger name="org.mortbay" level="error">
         <appender-ref ref="STDOUT-APPENDER"/>
     </logger>
 
