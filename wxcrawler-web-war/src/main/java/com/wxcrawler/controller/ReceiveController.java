@@ -159,8 +159,8 @@ public class ReceiveController {
      */
     private boolean exsistContentUrl(String biz, String content_url) {
         Map<String, Object> condition = new HashMap<>(16);
-        condition.put("biz", biz);
-        condition.put("content_url", content_url);
+        condition.put("biz", new SearchField("biz", "=", biz));
+        condition.put("content_url", new SearchField("content_url", "=", content_url));
         Post post = iPostService.queryOne(condition);
         return post == null;
     }
@@ -263,21 +263,21 @@ public class ReceiveController {
     @ResponseBody
     @RequestMapping(value = "/getWxHis?flag={flag}", method = RequestMethod.GET)
     public Object getWxHis(@PathVariable Integer flag) {
-        //在采集队列表中有一个load字段，当值等于1时代表正在被读取
-        //首先删除采集队列表中load=1的行
+        //在采集队列表中有一个loading字段，当值等于1时代表正在被读取
+        //首先删除采集队列表中loading=1的行
         Map<String, Object> condition = new HashMap<>(16);
-        condition.put("load", new SearchField("load", "=", 1));
+        condition.put("loading", new SearchField("loading", "=", 1));
         iTmplistService.deleteByCondition(condition);
 
         //然后从队列表中任意select一行
-        Tmplist tmplist = iTmplistService.queryOne(condition);
+        Tmplist tmplist = iTmplistService.queryOne(new HashMap<>());
         //队列表为空
         String url = "";
         if(tmplist == null){
             //队列表如果空了，就从存储公众号biz的表中取得一个biz，这里我在公众号表中设置了一个采集时间的time字段，按照正序排列之后，就得到时间戳最小的一个公众号记录，并取得它的biz
             Map<String, Object> orderMap = new HashMap<>(16);
             orderMap.put("collect", "desc");
-            Weixin weixin = iWeixinService.queryOne(null, orderMap);
+            Weixin weixin = iWeixinService.queryOne(new HashMap<>(), orderMap);
             //拼接公众号历史消息url地址（第一种页面形式）
             url = "http://mp.weixin.qq.com/mp/getmasssendmsg?__biz=" + weixin.getBiz() + "#wechat_webview_type=1&wechat_redirect";
             if (flag != 1){
@@ -290,8 +290,8 @@ public class ReceiveController {
         }else{
             //取得当前这一行的content_url字段
             url = tmplist.getContentUrl();
-            //将load字段update为1
-            tmplist.setLoad(1);
+            //将loading字段update为1
+            tmplist.setLoading(1);
             iTmplistService.update(tmplist);
         }
         //将下一个将要跳转的$url变成js脚本，由anyproxy注入到微信页面中。
@@ -306,30 +306,31 @@ public class ReceiveController {
     @ResponseBody
     @RequestMapping(value = "/getWxPost?flag={flag}", method = RequestMethod.GET)
     public Object getWxPost(@PathVariable int flag) {
-        //首先删除采集队列表中load=1的行
+        //首先删除采集队列表中loading=1的行
         Map<String, Object> condition = new HashMap<>(16);
-        condition.put("load", new SearchField("load", "=", 1));
+        condition.put("loading", new SearchField("loading", "=", 1));
         iTmplistService.deleteByCondition(condition);
 
         //然后从队列表中按照“order by id asc”选择多行(注意这一行和上面的程序不一样)
         Map<String, Object> orderMap = new HashMap<>(16);
         orderMap.put("id", "asc");
-        List<Tmplist> tmplists = iTmplistService.queryList(null, orderMap);
+        condition.clear();
+        List<Tmplist> tmplists = iTmplistService.queryList(condition, orderMap);
         //队列表为空
         String url = "";
         if(!tmplists.isEmpty() && tmplists.size() > 1){//(注意这一行和上面的程序不一样)
             //取得第0行的content_url字段
             Tmplist tmplist = tmplists.get(0);
             url = tmplists.get(0).getContentUrl();
-            //将第0行的load字段update为1
-            //将load字段update为1
-            tmplist.setLoad(1);
+            //将第0行的loading字段update为1
+            //将loading字段update为1
+            tmplist.setLoading(1);
             iTmplistService.update(tmplist);
         }else{
             //队列表还剩下最后一条时，就从存储公众号biz的表中取得一个biz，这里我在公众号表中设置了一个采集时间的time字段，按照正序排列之后，就得到时间戳最小的一个公众号记录，并取得它的biz
             orderMap.clear();
             orderMap.put("collect", "desc");
-            Weixin weixin = iWeixinService.queryOne(null, orderMap);
+            Weixin weixin = iWeixinService.queryOne(new HashMap<>(), orderMap);
             //拼接公众号历史消息url地址（第一种页面形式）
             url = "http://mp.weixin.qq.com/mp/getmasssendmsg?__biz=" + weixin.getBiz() + "#wechat_webview_type=1&wechat_redirect";
             if (flag != 1){
