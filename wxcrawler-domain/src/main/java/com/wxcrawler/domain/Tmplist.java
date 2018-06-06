@@ -2,7 +2,7 @@
  * Copyright (c) 2013-2014, thinkjoy Inc. All Rights Reserved.
  *
  * Project Name: wxcrawler
- * $Id:  Tmplist.java 2018-05-31 10:45:16 $
+ * $Id:  Tmplist.java 2018-06-06 16:05:36 $
  */
 
 
@@ -32,7 +32,7 @@ public class Tmplist extends MyBaseDomain<Integer>{
 
 
     /** 读取中标记 */
-    private Integer load;
+    private Integer loading;
 
 
 	public Tmplist(){
@@ -71,15 +71,15 @@ public class Tmplist extends MyBaseDomain<Integer>{
 	 *读取中标记
 	 * @param value
 	 */
-	public void setLoad(Integer value) {
-        this.load = value;
+	public void setLoading(Integer value) {
+        this.loading = value;
     }
 	/**
 	 *读取中标记
 	 * @return
 	 */
-    public Integer getLoad() {
-        return this.load;
+    public Integer getLoading() {
+        return this.loading;
     }
 
 
@@ -87,7 +87,7 @@ public class Tmplist extends MyBaseDomain<Integer>{
 		return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
 			.append("Id",getId())
 			.append("ContentUrl",getContentUrl())
-			.append("Load",getLoad())
+			.append("Loading",getLoading())
 			.toString();
 	}
 

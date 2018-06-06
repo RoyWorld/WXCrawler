@@ -8,7 +8,7 @@
     <sql id="Base_Column_List">
         id as id ,
         content_url as contentUrl ,
-        load as load 
+        loading as loading 
     </sql>
 
 	<!-- 列表对应的查询条件组合  -->
@@ -26,11 +26,11 @@
                </if>
                <if test="condition.content_url__==null"> AND tb_tmplist.content_url = #{condition.contentUrl}</if>
            </if>
-           <if test="condition.load!=null">
-               <if test="condition.load__!=null">
-                   AND tb_tmplist.${condition.load.field} ${condition.load.op} #{condition.load.data}
+           <if test="condition.loading!=null">
+               <if test="condition.loading__!=null">
+                   AND tb_tmplist.${condition.loading.field} ${condition.loading.op} #{condition.loading.data}
                </if>
-               <if test="condition.load__==null"> AND tb_tmplist.load = #{condition.load}</if>
+               <if test="condition.loading__==null"> AND tb_tmplist.loading = #{condition.loading}</if>
            </if>
         </where>
   </sql>
@@ -43,8 +43,8 @@
 		<if test="condition.contentUrl!=null">
                 AND content_url like CONCAT('%', #{condition.contentUrl} , '%')
             </if>
-		<if test="condition.load!=null">
-                AND load like CONCAT('%', #{condition.load} , '%')
+		<if test="condition.loading!=null">
+                AND loading like CONCAT('%', #{condition.loading} , '%')
             </if>
         </where>
   </sql>
@@ -58,8 +58,8 @@
             <if test="condition.contentUrl!=null">
                 AND content_url = #{condition.contentUrl}
             </if>
-            <if test="condition.load!=null">
-                AND load = #{condition.load}
+            <if test="condition.loading!=null">
+                AND loading = #{condition.loading}
             </if>
         </trim>
   </sql>
@@ -74,8 +74,8 @@
 						<if test="order.contentUrl!=null">
 						tb_tmplist.content_url ${order.contentUrl},
 						</if>
-						<if test="order.load!=null">
-						tb_tmplist.load ${order.load},
+						<if test="order.loading!=null">
+						tb_tmplist.loading ${order.loading},
 						</if>
 			</trim>
 		  
@@ -86,11 +86,11 @@
         INSERT INTO tb_tmplist (
 				id,
 				content_url,
-				load
+				loading
         ) VALUES (
         #{id},
         #{contentUrl},
-        #{load}
+        #{loading}
         )
     </insert>
 
@@ -100,7 +100,7 @@
 		<set>
          
 				content_url = #{contentUrl},
-				load = #{load}
+				loading = #{loading}
          
 		</set>
 		
@@ -115,8 +115,8 @@
             <if test="update.contentUrl!=null">
                 content_url = #{update.contentUrl},
             </if>
-            <if test="update.load!=null">
-                load = #{update.load},
+            <if test="update.loading!=null">
+                loading = #{update.loading},
             </if>
         </trim>
         <include refid="queryOptions"/>
@@ -132,8 +132,8 @@
                 <if test="insert.contentUrl!=null">
                     content_url,
                 </if>
-                <if test="insert.load!=null">
-                    load
+                <if test="insert.loading!=null">
+                    loading
                 </if>
             </trim>
         ) VALUES (
@@ -144,8 +144,8 @@
                     <if test="insert.contentUrl!=null">
                         #{insert.contentUrl},
                     </if>
-                    <if test="insert.load!=null">
-                        #{insert.load}
+                    <if test="insert.loading!=null">
+                        #{insert.loading}
                     </if>
             </trim>
         )

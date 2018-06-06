@@ -2,7 +2,7 @@
  * Copyright (c) 2013-2014, thinkjoy Inc. All Rights Reserved.
  *
  * Project Name: wxcrawler
- * $Id:  TmplistController.java 2018-05-31 10:45:16 $
+ * $Id:  TmplistController.java 2018-06-06 16:05:36 $
  */
 
 package com.wxcrawler.controller.api;
@@ -132,8 +132,8 @@ public class ApiTmplistController{
             if(!StringUtils.isBlank(tmplist.getContentUrl())){
                 tmplist_old.setContentUrl(tmplist.getContentUrl());
             }
-            if(tmplist.getLoad() != null){
-                tmplist_old.setLoad(tmplist.getLoad());
+            if(tmplist.getLoading() != null){
+                tmplist_old.setLoading(tmplist.getLoading());
             }
 
 
@@ -201,8 +201,8 @@ public class ApiTmplistController{
             if(!StringUtils.isBlank(tmplist.getContentUrl())){
                 whereParams.put("content_url", new SearchField("content_url", "like", "%" + tmplist.getContentUrl() + "%"));
             }
-            if(tmplist.getLoad() != null){
-                whereParams.put("load", new SearchField("load", "=", tmplist.getLoad()));
+            if(tmplist.getLoading() != null){
+                whereParams.put("loading", new SearchField("loading", "=", tmplist.getLoading()));
             }
 
 
