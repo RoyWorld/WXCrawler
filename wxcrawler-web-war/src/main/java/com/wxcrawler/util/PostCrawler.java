@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
  * 将文章爬取保存下来
  * Created by RoyChan on 2018/6/4.
  */
-@Component("postCrawler")
+@Component
 public class PostCrawler {
 
     Logger logger = LoggerFactory.getLogger(PostCrawler.class);

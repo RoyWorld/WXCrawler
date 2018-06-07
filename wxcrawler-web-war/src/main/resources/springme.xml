@@ -20,6 +20,8 @@
 
     <aop:aspectj-autoproxy/>
 
+    <bean id="loggerUtilAspect" class="com.wxcrawler.util.LoggerAspect"/>
+
     <!--默认的redis配置，启动时会建立连接-->
     <!--<import resource="classpath*:spring-redis.xml"/>-->
 
@@ -33,7 +35,7 @@
     </bean>
 
     <!-- 使用annotation定义事务 -->
-    <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true"/>
+    <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="false"/>
 
     <!-- MyBatis配置 -->
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">

@@ -11,20 +11,20 @@
        http://www.springframework.org/schema/tx
        http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
 
-    <!-- 定时清理考试角色 -->
+    <!-- 定时扫描队列表 -->
     <bean id="scanTmpListJob" class="com.wxcrawler.util.ScanTmplistJob"/>
     <bean id="scanTmpListJobTask" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
         <property name="targetObject" ref="scanTmpListJob"/>
-        <!-- 定时执行 doItem 方法 -->
+        <!-- 定时执行 scan 方法 -->
         <property name="targetMethod" value="scan"/>
         <!-- 是否允许任务并发执行。当值为false时，表示必须等到前一个线程处理完毕后才再启一个新的线程 -->
         <property name="concurrent" value="false"/>
     </bean>
     <bean id="scanTmpListTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="scanTmpListJobTask"/>
-        <!--<property name="cronExpression" value="0 10 * * * ?"/>&lt;!&ndash; 每隔10分钟执行一次 &ndash;&gt;-->
+        <property name="cronExpression" value="0 10 * * * ?"/><!-- 每隔10分钟执行一次 -->
         <!--测试-->
-        <property name="cronExpression" value="0 0/1 * * * ?"/>
+        <!--<property name="cronExpression" value="0 0/10 * * * ?"/>-->
     </bean>
 
 

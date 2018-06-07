@@ -1,5 +1,7 @@
 package com.wxcrawler.util;
 
+import com.wxcrawler.annotation.LogAfter;
+import com.wxcrawler.annotation.LogBefore;
 import com.wxcrawler.domain.Post;
 import com.wxcrawler.domain.SearchField;
 import com.wxcrawler.domain.Tmplist;
@@ -60,23 +62,32 @@ public class ScanTmplistJob {
     //爬虫线程池
     ExecutorService threadPoolExecutor = new ThreadPoolExecutor(10, 20, 3, TimeUnit.SECONDS, crawlerQueue, new CrawlerThreadFactory(), new ThreadPoolExecutor.AbortPolicy());
 
+
     /**
      * 定时任务执行方法，每10分钟执行一次
      * 扫描任务表是否有任务需要执行
      * @throws InterruptedException
      */
+    @LogBefore(clazz = ScanTmplistJob.class, msg = "------------ 开始扫描 ------------")
+    @LogAfter(clazz = ScanTmplistJob.class, msg = "------------ 暂无任务 ------------")
     public void scan() throws InterruptedException {
         Map<String, Object> condition = new HashMap<>(16);
-        condition.put("loading", new SearchField("loading", "=", 0));
+        condition.put("loading", new SearchField("loading", "=", 1));
         List<Tmplist> tmplists = iTmplistService.queryList(condition);
+
+        executeCrawler(tmplists);
+    }
+
+
+    public void executeCrawler(List<Tmplist> tmplists) throws InterruptedException {
         if (tmplists.size() != 0){
-            threadPoolExecutor.execute(()-> System.out.println(Thread.currentThread().getName()));
-            threadPoolExecutor.shutdown();
-            while (!threadPoolExecutor.isTerminated()){
+            CountDownLatch countDownLatch = new CountDownLatch(tmplists.size());
+            tmplists.forEach((tmplist)-> {
+                threadPoolExecutor.execute(new PostCrawlerTask(tmplist, countDownLatch));
+            });
+            while (countDownLatch.getCount() != 0) {
                 Thread.sleep(5000);
             }
-        }else {
-            logger.debug("------------ 暂无任务 ------------");
         }
     }
 
@@ -86,20 +97,31 @@ public class ScanTmplistJob {
     class PostCrawlerTask implements Runnable{
 
         Tmplist tmplist;
+        CountDownLatch countDownLatch;
 
-        public PostCrawlerTask(Tmplist tmplist) {
+        public PostCrawlerTask(Tmplist tmplist, CountDownLatch countDownLatch) {
             this.tmplist = tmplist;
+            this.countDownLatch = countDownLatch;
         }
 
         @Override
         public void run() {
-            logger.debug(String.format("------------ %s开始任务 ------------", Thread.currentThread().getName()));
+            logger.debug(String.format("------------ %s开始爬取 ------------", Thread.currentThread().getName()));
+            //找到原文章
             Map<String, Object> postCondition = new HashMap<>();
             postCondition.put("content_url",  new SearchField("content_url", "=", tmplist.getContentUrl()));
+            logger.debug(String.format("------------ tmplist.content_url ：%s ------------", tmplist.getContentUrl()));
             Post post = iPostService.queryOne(postCondition);
 
+            //爬取文章
             postCrawler.crawlerContent(tmplist.getContentUrl(), post.getBiz(), post.getId());
-            logger.debug(String.format("------------ %s任务结束 ------------", Thread.currentThread().getName()));
+
+            tmplist.setLoading(0);
+            iTmplistService.update(tmplist);
+
+            post.setIsExsist(1);
+            countDownLatch.countDown();
+            logger.debug(String.format("------------ %s爬取结束 ------------", Thread.currentThread().getName()));
         }
     }
 }
