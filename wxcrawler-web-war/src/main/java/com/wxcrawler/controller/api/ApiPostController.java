@@ -2,7 +2,7 @@
  * Copyright (c) 2013-2014, thinkjoy Inc. All Rights Reserved.
  *
  * Project Name: wxcrawler
- * $Id:  PostController.java 2018-05-31 10:45:15 $
+ * $Id:  PostController.java 2018-06-07 15:42:16 $
  */
 
 package com.wxcrawler.controller.api;
@@ -89,6 +89,8 @@ public class ApiPostController{
                 msg = "公众号文章表文章阅读量不能为空";
             }else if(post.getLikeNum() != null){
                 msg = "公众号文章表文章点赞量不能为空";
+            }else if(post.getIsExsist() != null){
+                msg = "公众号文章表是否已爬取不能为空";
             }
 
             if(StringUtils.isNotBlank(msg)){
@@ -193,6 +195,8 @@ public class ApiPostController{
                 msg = "公众号文章表文章阅读量不能为空";
             }else if(post.getLikeNum() != null){
                 msg = "公众号文章表文章点赞量不能为空";
+            }else if(post.getIsExsist() != null){
+                msg = "公众号文章表是否已爬取不能为空";
 
             }
 
@@ -247,6 +251,9 @@ public class ApiPostController{
             }
             if(post.getLikeNum() != null){
                 post_old.setLikeNum(post.getLikeNum());
+            }
+            if(post.getIsExsist() != null){
+                post_old.setIsExsist(post.getIsExsist());
             }
 
 
@@ -349,6 +356,9 @@ public class ApiPostController{
             }
             if(post.getLikeNum() != null){
                 whereParams.put("likeNum", new SearchField("likeNum", "=", post.getLikeNum()));
+            }
+            if(post.getIsExsist() != null){
+                whereParams.put("is_exsist", new SearchField("is_exsist", "=", post.getIsExsist()));
             }
 
 

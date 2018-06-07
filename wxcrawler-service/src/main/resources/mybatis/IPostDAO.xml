@@ -19,7 +19,8 @@
         is_top as isTop ,
         datetime as datetime ,
         readNum as readNum ,
-        likeNum as likeNum 
+        likeNum as likeNum ,
+        is_exsist as isExsist 
     </sql>
 
 	<!-- 列表对应的查询条件组合  -->
@@ -39,7 +40,7 @@
            </if>
            <if test="condition.field_id!=null">
                <if test="condition.field_id__!=null">
-                   AND tb_post.${condition.field_id.field} ${condition.field_id.op} #{condition.fieldId.data}
+                   AND tb_post.${condition.field_id.field} ${condition.field_id.op} #{condition.field_id.data}
                </if>
                <if test="condition.field_id__==null"> AND tb_post.field_id = #{condition.fieldId}</if>
            </if>
@@ -51,7 +52,7 @@
            </if>
            <if test="condition.title_encode!=null">
                <if test="condition.title_encode__!=null">
-                   AND tb_post.${condition.title_encode.field} ${condition.title_encode.op} #{condition.titleEncode.data}
+                   AND tb_post.${condition.title_encode.field} ${condition.title_encode.op} #{condition.title_encode.data}
                </if>
                <if test="condition.title_encode__==null"> AND tb_post.title_encode = #{condition.titleEncode}</if>
            </if>
@@ -63,13 +64,13 @@
            </if>
            <if test="condition.content_url!=null">
                <if test="condition.content_url__!=null">
-                   AND tb_post.${condition.content_url.field} ${condition.content_url.op} #{condition.contentUrl.data}
+                   AND tb_post.${condition.content_url.field} ${condition.content_url.op} #{condition.content_url.data}
                </if>
                <if test="condition.content_url__==null"> AND tb_post.content_url = #{condition.contentUrl}</if>
            </if>
            <if test="condition.source_url!=null">
                <if test="condition.source_url__!=null">
-                   AND tb_post.${condition.source_url.field} ${condition.source_url.op} #{condition.sourceUrl.data}
+                   AND tb_post.${condition.source_url.field} ${condition.source_url.op} #{condition.source_url.data}
                </if>
                <if test="condition.source_url__==null"> AND tb_post.source_url = #{condition.sourceUrl}</if>
            </if>
@@ -81,13 +82,13 @@
            </if>
            <if test="condition.is_multi!=null">
                <if test="condition.is_multi__!=null">
-                   AND tb_post.${condition.is_multi.field} ${condition.is_multi.op} #{condition.isMulti.data}
+                   AND tb_post.${condition.is_multi.field} ${condition.is_multi.op} #{condition.is_multi.data}
                </if>
                <if test="condition.is_multi__==null"> AND tb_post.is_multi = #{condition.isMulti}</if>
            </if>
            <if test="condition.is_top!=null">
                <if test="condition.is_top__!=null">
-                   AND tb_post.${condition.is_top.field} ${condition.is_top.op} #{condition.isTop.data}
+                   AND tb_post.${condition.is_top.field} ${condition.is_top.op} #{condition.is_top.data}
                </if>
                <if test="condition.is_top__==null"> AND tb_post.is_top = #{condition.isTop}</if>
            </if>
@@ -108,6 +109,12 @@
                    AND tb_post.${condition.likeNum.field} ${condition.likeNum.op} #{condition.likeNum.data}
                </if>
                <if test="condition.likeNum__==null"> AND tb_post.likeNum = #{condition.likeNum}</if>
+           </if>
+           <if test="condition.is_exsist!=null">
+               <if test="condition.is_exsist__!=null">
+                   AND tb_post.${condition.is_exsist.field} ${condition.is_exsist.op} #{condition.is_exsist.data}
+               </if>
+               <if test="condition.is_exsist__==null"> AND tb_post.is_exsist = #{condition.isExsist}</if>
            </if>
         </where>
   </sql>
@@ -156,6 +163,9 @@
 		<if test="condition.likeNum!=null">
                 AND likeNum like CONCAT('%', #{condition.likeNum} , '%')
             </if>
+		<if test="condition.isExsist!=null">
+                AND is_exsist like CONCAT('%', #{condition.isExsist} , '%')
+            </if>
         </where>
   </sql>
 
@@ -203,6 +213,9 @@
             </if>
             <if test="condition.likeNum!=null">
                 AND likeNum = #{condition.likeNum}
+            </if>
+            <if test="condition.isExsist!=null">
+                AND is_exsist = #{condition.isExsist}
             </if>
         </trim>
   </sql>
@@ -253,6 +266,9 @@
 						<if test="order.likeNum!=null">
 						tb_post.likeNum ${order.likeNum},
 						</if>
+						<if test="order.isExsist!=null">
+						tb_post.is_exsist ${order.isExsist},
+						</if>
 			</trim>
 		  
 	   </if>
@@ -273,7 +289,8 @@
 				is_top,
 				datetime,
 				readNum,
-				likeNum
+				likeNum,
+				is_exsist
         ) VALUES (
         #{id},
         #{biz},
@@ -288,7 +305,8 @@
         #{isTop},
         #{datetime},
         #{readNum},
-        #{likeNum}
+        #{likeNum},
+        #{isExsist}
         )
     </insert>
 
@@ -309,7 +327,8 @@
 				is_top = #{isTop},
 				datetime = #{datetime},
 				readNum = #{readNum},
-				likeNum = #{likeNum}
+				likeNum = #{likeNum},
+				is_exsist = #{isExsist}
          
 		</set>
 		
@@ -360,6 +379,9 @@
             <if test="update.likeNum!=null">
                 likeNum = #{update.likeNum},
             </if>
+            <if test="update.isExsist!=null">
+                is_exsist = #{update.isExsist},
+            </if>
         </trim>
         <include refid="queryOptions"/>
     </update>
@@ -408,7 +430,10 @@
                     readNum,
                 </if>
                 <if test="insert.likeNum!=null">
-                    likeNum
+                    likeNum,
+                </if>
+                <if test="insert.isExsist!=null">
+                    is_exsist
                 </if>
             </trim>
         ) VALUES (
@@ -453,7 +478,10 @@
                         #{insert.readNum},
                     </if>
                     <if test="insert.likeNum!=null">
-                        #{insert.likeNum}
+                        #{insert.likeNum},
+                    </if>
+                    <if test="insert.isExsist!=null">
+                        #{insert.isExsist}
                     </if>
             </trim>
         )

@@ -22,7 +22,7 @@
            </if>
            <if test="condition.content_url!=null">
                <if test="condition.content_url__!=null">
-                   AND tb_tmplist.${condition.content_url.field} ${condition.content_url.op} #{condition.contentUrl.data}
+                   AND tb_tmplist.${condition.content_url.field} ${condition.content_url.op} #{condition.content_url.data}
                </if>
                <if test="condition.content_url__==null"> AND tb_tmplist.content_url = #{condition.contentUrl}</if>
            </if>

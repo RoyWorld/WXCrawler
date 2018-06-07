@@ -2,7 +2,7 @@
  * Copyright (c) 2013-2014, thinkjoy Inc. All Rights Reserved.
  *
  * Project Name: wxcrawler
- * $Id:  Post.java 2018-05-31 10:45:15 $
+ * $Id:  Post.java 2018-06-07 15:42:16 $
  */
 
 
@@ -77,6 +77,10 @@ public class Post extends MyBaseDomain<Integer>{
 
     /** 文章点赞量 */
     private Integer likeNum;
+
+
+    /** 是否已爬取 */
+    private Integer isExsist;
 
 
 	public Post(){
@@ -291,6 +295,21 @@ public class Post extends MyBaseDomain<Integer>{
         return this.likeNum;
     }
 
+	/**
+	 *是否已爬取
+	 * @param value
+	 */
+	public void setIsExsist(Integer value) {
+        this.isExsist = value;
+    }
+	/**
+	 *是否已爬取
+	 * @return
+	 */
+    public Integer getIsExsist() {
+        return this.isExsist;
+    }
+
 
 	public String toString() {
 		return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
@@ -308,6 +327,7 @@ public class Post extends MyBaseDomain<Integer>{
 			.append("Datetime",getDatetime())
 			.append("ReadNum",getReadNum())
 			.append("LikeNum",getLikeNum())
+			.append("IsExsist",getIsExsist())
 			.toString();
 	}
 
