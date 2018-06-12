@@ -2,7 +2,7 @@
  * Copyright (c) 2013-2014, thinkjoy Inc. All Rights Reserved.
  *
  * Project Name: wxcrawler
- * $Id:  WeixinController.java 2018-06-06 16:32:19 $
+ * $Id:  WeixinController.java 2018-06-12 10:34:50 $
  */
 
 package com.wxcrawler.controller.api;
@@ -135,8 +135,8 @@ public class ApiWeixinController{
             if(!StringUtils.isBlank(weixin.getNickName())){
                 weixin_old.setNickName(weixin.getNickName());
             }
-            if(!StringUtils.isBlank(weixin.getHeadImg())){
-                weixin_old.setHeadImg(weixin.getHeadImg());
+            if(!StringUtils.isBlank(weixin.getAvatar())){
+                weixin_old.setAvatar(weixin.getAvatar());
             }
             if(weixin.getCollect() != null){
                 weixin_old.setCollect(weixin.getCollect());
@@ -210,8 +210,8 @@ public class ApiWeixinController{
             if(!StringUtils.isBlank(weixin.getNickName())){
                 whereParams.put("nickName", new SearchField("nickName", "like", "%" + weixin.getNickName() + "%"));
             }
-            if(!StringUtils.isBlank(weixin.getHeadImg())){
-                whereParams.put("headImg", new SearchField("headImg", "like", "%" + weixin.getHeadImg() + "%"));
+            if(!StringUtils.isBlank(weixin.getAvatar())){
+                whereParams.put("avatar", new SearchField("avatar", "like", "%" + weixin.getAvatar() + "%"));
             }
             if(weixin.getCollect() != null){
                 whereParams.put("collect", new SearchField("collect", "=", weixin.getCollect()));
