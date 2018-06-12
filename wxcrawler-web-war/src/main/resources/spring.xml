@@ -13,7 +13,6 @@
     <!-- 引入service的spring配置文件 -->
     <import resource="classpath:springme.xml"/>
 
-    <!--<context:component-scan base-package="cn.thinkjoy.common.restful,cn.qtone.zyj"/>-->
 
     <!--<bean id="freemarkerConfig"-->
     <!--class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">-->

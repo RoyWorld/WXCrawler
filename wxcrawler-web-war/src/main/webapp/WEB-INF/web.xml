@@ -21,54 +21,6 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
-    <!--<filter>-->
-        <!--<filter-name>delegatingSecurityFilter</filter-name>-->
-        <!--<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>-->
-    <!--</filter>-->
-    <!--<filter-mapping>-->
-        <!--<filter-name>delegatingSecurityFilter</filter-name>-->
-        <!--<url-pattern>/zyj/userid</url-pattern>-->
-    <!--</filter-mapping>-->
-    <!-- druid监控 start -->
-    <!--<filter>-->
-        <!--<filter-name>DruidWebStatFilter</filter-name>-->
-        <!--&lt;!&ndash;<filter-class>com.alibaba.druid.support.http.WebStatFilter</filter-class>&ndash;&gt;-->
-        <!--<init-param>-->
-            <!--<param-name>exclusions</param-name>-->
-            <!--<param-value>*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*</param-value>-->
-        <!--</init-param>-->
-    <!--</filter>-->
-    <!--<filter-mapping>-->
-        <!--<filter-name>DruidWebStatFilter</filter-name>-->
-        <!--<url-pattern>/*</url-pattern>-->
-    <!--</filter-mapping>-->
-
-    <!--<servlet>-->
-        <!--<servlet-name>DruidStatView</servlet-name>-->
-        <!--<servlet-class>com.alibaba.druid.support.http.StatViewServlet</servlet-class>-->
-
-        <!--<init-param>-->
-            <!--&lt;!&ndash; 允许清空统计数据 &ndash;&gt;-->
-            <!--<param-name>resetEnable</param-name>-->
-            <!--<param-value>true</param-value>-->
-        <!--</init-param>-->
-        <!--<init-param>-->
-            <!--&lt;!&ndash; 用户名 &ndash;&gt;-->
-            <!--<param-name>loginUsername</param-name>-->
-            <!--<param-value>admin</param-value>-->
-        <!--</init-param>-->
-        <!--<init-param>-->
-            <!--&lt;!&ndash; 密码 &ndash;&gt;-->
-            <!--<param-name>loginPassword</param-name>-->
-            <!--<param-value>zyj</param-value>-->
-        <!--</init-param>-->
-    <!--</servlet>-->
-    <!--<servlet-mapping>-->
-        <!--<servlet-name>DruidStatView</servlet-name>-->
-        <!--<url-pattern>/druid/*</url-pattern>-->
-    <!--</servlet-mapping>-->
-    <!-- druid监控 start -->
-
     <!--  Spring 服务层的配置文件 -->
     <context-param>
         <param-name>contextConfigLocation</param-name>

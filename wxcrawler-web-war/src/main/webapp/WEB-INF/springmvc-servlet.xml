@@ -21,6 +21,9 @@
 
     <mvc:default-servlet-handler/>
 
+    <context:component-scan base-package="com.wxcrawler.controller"/>
+
+
     <!-- Enables the Spring MVC @Controller programming model -->
     <mvc:annotation-driven>
         <mvc:message-converters>
@@ -62,7 +65,7 @@
 
     <bean id="velocityConfigurer" class="org.springframework.web.servlet.view.velocity.VelocityConfigurer">
         <property name="resourceLoaderPath">
-            <value>WEB-INF/html/</value>
+            <value>WEB-INF/view/</value>
         </property>
         <property name="velocityProperties">
             <props>

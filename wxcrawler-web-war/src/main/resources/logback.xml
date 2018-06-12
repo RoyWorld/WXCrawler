@@ -111,7 +111,7 @@
         <appender-ref ref="STDOUT-APPENDER"/>
     </logger>
 
-    <logger name="org.springframework" level="ERROR">
+    <logger name="org.springframework" level="debug">
         <appender-ref ref="SQL-FILE-APPENDER"/>
     </logger>
 
