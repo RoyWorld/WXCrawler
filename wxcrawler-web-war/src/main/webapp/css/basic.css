@@ -1,0 +1,140 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+    /* background-color: black; */
+    background-image: url(../images/animal_world_map_detail.jpg);
+    font-family: Roboto, "Helvetica Neue", Helvetica, Tahoma, Arial, FZLanTingHeiS-L-G, "PingFang SC", "Microsoft YaHei";
+    background-size: auto;
+    font-size: 14px;
+    font-weight: normal;
+}
+.hy-ability {
+    font-family: Microsoft YaHei;
+    height: 120px;
+    text-align: center;
+    /*// background: #fff;*/
+}
+.hy-ability-item {
+    display: inline-block;
+    width: 100px;
+    margin: 26px 22px 0;
+    vertical-align: top;
+    horizon-align: center;
+}
+.hy-ability-item-img {
+    height: 62px;
+}
+.hy-ability-item-title {
+    font-size: 20px;
+    line-height: 26px;
+    color: #333;
+    font-weight: 400;
+    margin: 18px 0 10px;
+}
+.hy-ability-item-subtitle {
+    font-size:16px;
+    color:#999;
+    line-height:21px;
+}
+.circle.active {
+    width: 80px;
+    height: 80px;
+    border-radius: 80px;
+    background: #999999;
+    margin: auto;
+    text-align: center;
+    border: 1px solid #ffffff;
+}
+.word.active {
+    width: 48px;
+    height: 48px;
+    font-size: 48px;
+    font-weight: bold;
+    color: #ffffff;
+    margin: auto;
+}
+.circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 80px;
+    background: #ffffff;
+    margin: auto;
+    text-align: center;
+    border: 1px solid #999999;
+}
+.word {
+    width: 48px;
+    height: 48px;
+    font-size: 48px;
+    font-weight: bold;
+    color: #999999;
+    margin: auto;
+}
+.card-block {
+    background-color: rgb(255, 255, 255);
+    border-radius: 6px; padding: 20px;
+    margin-bottom: 20px;
+}
+.container {
+    /*background: #ffffff;*/
+/*// padding: 0px 200px;*/
+}
+.titleRow {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+.cardTitle {
+    margin: 0;
+    font-size: 18px;
+    font-weight: normal;
+    display: inline-flex;
+}
+.title {
+    font-size: 14px;
+    display: inline-flex;
+    line-height: 22px;
+}
+.status {
+    display: flex;
+    align-items: center;
+    color: #999;
+    font-size: 12px;
+    margin-bottom: 15px;
+}
+.itemRow {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+.item {
+    display: flex;
+    flex-direction: column;
+    padding-top: 15px;
+    border-bottom: 1px solid #fafafa;
+}
+.message {
+    color: #999;
+    font-size: 12px;
+    padding-left: 34px;
+    margin-bottom: 15px;
+    line-height: 22px;
+    display: inline-flex;
+}
+.allMessage {
+    text-align: center;
+    height: 48px;
+    line-height: 48px;
+}
+a:link {
+    color: #5485F7;
+    text-decoration: none;
+}

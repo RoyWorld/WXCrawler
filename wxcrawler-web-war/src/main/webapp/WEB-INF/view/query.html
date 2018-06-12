@@ -1,0 +1,64 @@
+#parse("/header.html")
+
+<div id="root" class="root" ng-app="modelApp" ng-controller="modelCtrl" >
+    <div class="page-page" style="margin: 0px 300px;" scroll>
+        <div class="hy-ability">
+            <div class="hy-ability-item">
+                <div class="circle active">
+                    <div class="word active">
+                        看
+                    </div>
+                </div>
+            </div>
+            <div class="hy-ability-item">
+                <div class="circle">
+                    <div class="word">
+                        查
+                    </div>
+                </div>
+            </div>
+            <div class="hy-ability-item">
+                <div class="circle">
+                    <div class="word">
+                        用
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="feed-list">
+            <div class="card-block ">
+                <div>
+                    <div class="titleRow">
+                        <h2 class="cardTitle">公众号列表</h2>
+                    </div>
+                    <div class="item" ng-repeat="weixin in weixinList | orderBy : '-createDate'" on-finish-render-filters="1">
+                        <div class="itemRow">
+                            <span class="title"><img class="avatar" ng-src="{{weixin.avatar}}" alt="avatar">{{weixin.nickName}}</span>
+                        </div>
+                        <div class="itemRow">
+                            <span href="#" class="message">{{weixin.message}}</span>
+                            <span class="status">{{weixin.datetime}}</span>
+                        </div>
+                    </div>
+
+                    <div align="center">
+                        <ul class="pagination">
+                            <li><a href="#" title="上一页"><</a></li>
+                            <li><a href="#">1</a></li>
+                            <li><a href="#">...</a></li>
+                            <li class="active"><a href="#">5</a></li>
+                            <li><a href="#">6</a></li>
+                            <li><a href="#">...</a></li>
+                            <li><a href="#" title="下一页">></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+#include("./footer.html")
+
+<script src="/js/view/index.js"></script>
