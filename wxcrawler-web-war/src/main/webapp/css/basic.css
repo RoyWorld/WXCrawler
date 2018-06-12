@@ -46,12 +46,12 @@ body {
     text-align: center;
     border: 1px solid #ffffff;
 }
-.word.active {
+.word.active a {
     width: 48px;
     height: 48px;
     font-size: 48px;
     font-weight: bold;
-    color: #ffffff;
+    color: #ffffff !important;
     margin: auto;
 }
 .circle {
@@ -63,12 +63,12 @@ body {
     text-align: center;
     border: 1px solid #999999;
 }
-.word {
+.word a {
     width: 48px;
     height: 48px;
     font-size: 48px;
     font-weight: bold;
-    color: #999999;
+    color: #999999 !important;
     margin: auto;
 }
 .card-block {
