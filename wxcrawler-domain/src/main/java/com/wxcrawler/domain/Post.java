@@ -2,7 +2,7 @@
  * Copyright (c) 2013-2014, thinkjoy Inc. All Rights Reserved.
  *
  * Project Name: wxcrawler
- * $Id:  Post.java 2018-06-07 15:42:16 $
+ * $Id:  Post.java 2018-06-12 16:45:24 $
  */
 
 
@@ -39,12 +39,16 @@ public class Post extends MyBaseDomain<Integer>{
     private String title;
 
 
-    /** 文章编码，防止文章出现emoji */
+    /** 文章标题编码，防止文章标题出现emoji */
     private String titleEncode;
 
 
     /** 文章摘要 */
     private String digest;
+
+
+    /** 文章摘要编码，防止文章摘要出现emoji */
+    private String digestEncode;
 
 
     /** 文章地址 */
@@ -79,7 +83,7 @@ public class Post extends MyBaseDomain<Integer>{
     private Integer likeNum;
 
 
-    /** 是否已爬取 */
+    /** 是否已爬取，0：未爬取，1：已爬取，2：文章不存在 */
     private Integer isExsist;
 
 
@@ -146,14 +150,14 @@ public class Post extends MyBaseDomain<Integer>{
     }
 
 	/**
-	 *文章编码，防止文章出现emoji
+	 *文章标题编码，防止文章标题出现emoji
 	 * @param value
 	 */
 	public void setTitleEncode(String value) {
         this.titleEncode = value;
     }
 	/**
-	 *文章编码，防止文章出现emoji
+	 *文章标题编码，防止文章标题出现emoji
 	 * @return
 	 */
     public String getTitleEncode() {
@@ -173,6 +177,21 @@ public class Post extends MyBaseDomain<Integer>{
 	 */
     public String getDigest() {
         return this.digest;
+    }
+
+	/**
+	 *文章摘要编码，防止文章摘要出现emoji
+	 * @param value
+	 */
+	public void setDigestEncode(String value) {
+        this.digestEncode = value;
+    }
+	/**
+	 *文章摘要编码，防止文章摘要出现emoji
+	 * @return
+	 */
+    public String getDigestEncode() {
+        return this.digestEncode;
     }
 
 	/**
@@ -296,14 +315,14 @@ public class Post extends MyBaseDomain<Integer>{
     }
 
 	/**
-	 *是否已爬取
+	 *是否已爬取，0：未爬取，1：已爬取，2：文章不存在
 	 * @param value
 	 */
 	public void setIsExsist(Integer value) {
         this.isExsist = value;
     }
 	/**
-	 *是否已爬取
+	 *是否已爬取，0：未爬取，1：已爬取，2：文章不存在
 	 * @return
 	 */
     public Integer getIsExsist() {
@@ -319,6 +338,7 @@ public class Post extends MyBaseDomain<Integer>{
 			.append("Title",getTitle())
 			.append("TitleEncode",getTitleEncode())
 			.append("Digest",getDigest())
+			.append("DigestEncode",getDigestEncode())
 			.append("ContentUrl",getContentUrl())
 			.append("SourceUrl",getSourceUrl())
 			.append("Cover",getCover())

@@ -2,7 +2,7 @@
  * Copyright (c) 2013-2014, thinkjoy Inc. All Rights Reserved.
  *
  * Project Name: wxcrawler
- * $Id:  PostController.java 2018-06-07 15:42:16 $
+ * $Id:  PostController.java 2018-06-12 16:45:24 $
  */
 
 package com.wxcrawler.controller.api;
@@ -60,13 +60,17 @@ public class ApiPostController{
             }else if(post.getTitle().length() > 255){
                 msg = "公众号文章表文章标题长度不可超过255";
             }else if(StringUtils.isBlank(post.getTitleEncode())){
-                msg = "公众号文章表文章编码，防止文章出现emoji不能为空";
+                msg = "公众号文章表文章标题编码，防止文章标题出现emoji不能为空";
             }else if(post.getTitleEncode().length() > 65535){
-                msg = "公众号文章表文章编码，防止文章出现emoji长度不可超过65,535";
+                msg = "公众号文章表文章标题编码，防止文章标题出现emoji长度不可超过65,535";
             }else if(StringUtils.isBlank(post.getDigest())){
                 msg = "公众号文章表文章摘要不能为空";
             }else if(post.getDigest().length() > 500){
                 msg = "公众号文章表文章摘要长度不可超过500";
+            }else if(StringUtils.isBlank(post.getDigestEncode())){
+                msg = "公众号文章表文章摘要编码，防止文章摘要出现emoji不能为空";
+            }else if(post.getDigestEncode().length() > 65535){
+                msg = "公众号文章表文章摘要编码，防止文章摘要出现emoji长度不可超过65,535";
             }else if(StringUtils.isBlank(post.getContentUrl())){
                 msg = "公众号文章表文章地址不能为空";
             }else if(post.getContentUrl().length() > 500){
@@ -90,7 +94,7 @@ public class ApiPostController{
             }else if(post.getLikeNum() != null){
                 msg = "公众号文章表文章点赞量不能为空";
             }else if(post.getIsExsist() != null){
-                msg = "公众号文章表是否已爬取不能为空";
+                msg = "公众号文章表是否已爬取，0：未爬取，1：已爬取，2：文章不存在不能为空";
             }
 
             if(StringUtils.isNotBlank(msg)){
@@ -166,13 +170,17 @@ public class ApiPostController{
             }else if(post.getTitle().length() > 255){
                 msg = "公众号文章表文章标题长度不可超过255";
             }else if(StringUtils.isBlank(post.getTitleEncode())){
-                msg = "公众号文章表文章编码，防止文章出现emoji不能为空";
+                msg = "公众号文章表文章标题编码，防止文章标题出现emoji不能为空";
             }else if(post.getTitleEncode().length() > 65535){
-                msg = "公众号文章表文章编码，防止文章出现emoji长度不可超过65,535";
+                msg = "公众号文章表文章标题编码，防止文章标题出现emoji长度不可超过65,535";
             }else if(StringUtils.isBlank(post.getDigest())){
                 msg = "公众号文章表文章摘要不能为空";
             }else if(post.getDigest().length() > 500){
                 msg = "公众号文章表文章摘要长度不可超过500";
+            }else if(StringUtils.isBlank(post.getDigestEncode())){
+                msg = "公众号文章表文章摘要编码，防止文章摘要出现emoji不能为空";
+            }else if(post.getDigestEncode().length() > 65535){
+                msg = "公众号文章表文章摘要编码，防止文章摘要出现emoji长度不可超过65,535";
             }else if(StringUtils.isBlank(post.getContentUrl())){
                 msg = "公众号文章表文章地址不能为空";
             }else if(post.getContentUrl().length() > 500){
@@ -196,7 +204,7 @@ public class ApiPostController{
             }else if(post.getLikeNum() != null){
                 msg = "公众号文章表文章点赞量不能为空";
             }else if(post.getIsExsist() != null){
-                msg = "公众号文章表是否已爬取不能为空";
+                msg = "公众号文章表是否已爬取，0：未爬取，1：已爬取，2：文章不存在不能为空";
 
             }
 
@@ -227,6 +235,9 @@ public class ApiPostController{
             }
             if(!StringUtils.isBlank(post.getDigest())){
                 post_old.setDigest(post.getDigest());
+            }
+            if(!StringUtils.isBlank(post.getDigestEncode())){
+                post_old.setDigestEncode(post.getDigestEncode());
             }
             if(!StringUtils.isBlank(post.getContentUrl())){
                 post_old.setContentUrl(post.getContentUrl());
@@ -332,6 +343,9 @@ public class ApiPostController{
             }
             if(!StringUtils.isBlank(post.getDigest())){
                 whereParams.put("digest", new SearchField("digest", "like", "%" + post.getDigest() + "%"));
+            }
+            if(!StringUtils.isBlank(post.getDigestEncode())){
+                whereParams.put("digest_encode", new SearchField("digest_encode", "like", "%" + post.getDigestEncode() + "%"));
             }
             if(!StringUtils.isBlank(post.getContentUrl())){
                 whereParams.put("content_url", new SearchField("content_url", "like", "%" + post.getContentUrl() + "%"));

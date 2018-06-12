@@ -12,6 +12,7 @@
         title as title ,
         title_encode as titleEncode ,
         digest as digest ,
+        digest_encode as digestEncode ,
         content_url as contentUrl ,
         source_url as sourceUrl ,
         cover as cover ,
@@ -61,6 +62,12 @@
                    AND tb_post.${condition.digest.field} ${condition.digest.op} #{condition.digest.data}
                </if>
                <if test="condition.digest__==null"> AND tb_post.digest = #{condition.digest}</if>
+           </if>
+           <if test="condition.digest_encode!=null">
+               <if test="condition.digest_encode__!=null">
+                   AND tb_post.${condition.digest_encode.field} ${condition.digest_encode.op} #{condition.digest_encode.data}
+               </if>
+               <if test="condition.digest_encode__==null"> AND tb_post.digest_encode = #{condition.digestEncode}</if>
            </if>
            <if test="condition.content_url!=null">
                <if test="condition.content_url__!=null">
@@ -139,6 +146,9 @@
 		<if test="condition.digest!=null">
                 AND digest like CONCAT('%', #{condition.digest} , '%')
             </if>
+		<if test="condition.digestEncode!=null">
+                AND digest_encode like CONCAT('%', #{condition.digestEncode} , '%')
+            </if>
 		<if test="condition.contentUrl!=null">
                 AND content_url like CONCAT('%', #{condition.contentUrl} , '%')
             </if>
@@ -189,6 +199,9 @@
             </if>
             <if test="condition.digest!=null">
                 AND digest = #{condition.digest}
+            </if>
+            <if test="condition.digestEncode!=null">
+                AND digest_encode = #{condition.digestEncode}
             </if>
             <if test="condition.contentUrl!=null">
                 AND content_url = #{condition.contentUrl}
@@ -242,6 +255,9 @@
 						<if test="order.digest!=null">
 						tb_post.digest ${order.digest},
 						</if>
+						<if test="order.digestEncode!=null">
+						tb_post.digest_encode ${order.digestEncode},
+						</if>
 						<if test="order.contentUrl!=null">
 						tb_post.content_url ${order.contentUrl},
 						</if>
@@ -282,6 +298,7 @@
 				title,
 				title_encode,
 				digest,
+				digest_encode,
 				content_url,
 				source_url,
 				cover,
@@ -298,6 +315,7 @@
         #{title},
         #{titleEncode},
         #{digest},
+        #{digestEncode},
         #{contentUrl},
         #{sourceUrl},
         #{cover},
@@ -320,6 +338,7 @@
 				title = #{title},
 				title_encode = #{titleEncode},
 				digest = #{digest},
+				digest_encode = #{digestEncode},
 				content_url = #{contentUrl},
 				source_url = #{sourceUrl},
 				cover = #{cover},
@@ -354,6 +373,9 @@
             </if>
             <if test="update.digest!=null">
                 digest = #{update.digest},
+            </if>
+            <if test="update.digestEncode!=null">
+                digest_encode = #{update.digestEncode},
             </if>
             <if test="update.contentUrl!=null">
                 content_url = #{update.contentUrl},
@@ -408,6 +430,9 @@
                 <if test="insert.digest!=null">
                     digest,
                 </if>
+                <if test="insert.digestEncode!=null">
+                    digest_encode,
+                </if>
                 <if test="insert.contentUrl!=null">
                     content_url,
                 </if>
@@ -455,6 +480,9 @@
                     </if>
                     <if test="insert.digest!=null">
                         #{insert.digest},
+                    </if>
+                    <if test="insert.digestEncode!=null">
+                        #{insert.digestEncode},
                     </if>
                     <if test="insert.contentUrl!=null">
                         #{insert.contentUrl},
