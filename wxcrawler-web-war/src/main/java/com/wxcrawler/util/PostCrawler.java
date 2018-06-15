@@ -21,6 +21,7 @@ import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
@@ -47,7 +48,7 @@ public class PostCrawler {
     private Pattern headImgPattern = Pattern.compile("var round_head_img = \"(.*?)\";/si");
 
     //正则匹配获取图片名
-    private Pattern picNamePattern = Pattern.compile("(?<=mmbiz_png/).*(?=/)");
+    private Pattern picNamePattern = Pattern.compile("(?<=mmbiz_).*(?=/)");
 
     private String rootPath = "E:\\公众号";
 
@@ -66,15 +67,11 @@ public class PostCrawler {
                 String picUrl = srcStr.substring(index+2, srcStr.length()-1);
                 srcStr = srcStr.replace("data-src", "src");
                 //从url中获取图片名
-                String picName = getPicNameFromUrl(picUrl);
+                String[] fileInfos = getPicInfoFromUrl(picUrl);
+                String picName = fileInfos[1];
 
                 //从url中获取图片类型
-                String picType = "png";
-                try {
-                    picType = getPicTypeFromUrl(picUrl);
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
+                String picType = fileInfos[0];
 
                 //图片文件完整名称
                 String picFileName = picName + "." + picType;
@@ -190,33 +187,52 @@ public class PostCrawler {
         }
     }
 
-    /**
-     * 从url中的wx_fmt获取图片类型
-     * @param url
-     * @return
-     */
-    private String getPicTypeFromUrl(String url) throws UnsupportedEncodingException {
-        MultiValueMap<String, String> parameters = UriComponentsBuilder.fromUriString(URLDecoder.decode(url, "UTF-8")).build().getQueryParams();
-        return parameters.get("wx_fmt").get(0);
-    }
+//    /**
+//     * 从url中的wx_fmt获取图片类型
+//     * @param url
+//     * @return
+//     */
+//    private String getPicTypeFromUrl(String url) throws UnsupportedEncodingException {
+//        MultiValueMap<String, String> parameters = UriComponentsBuilder.fromUriString(URLDecoder.decode(url, "UTF-8")).build().getQueryParams();
+//        return parameters.get("wx_fmt").get(0);
+//    }
+
+//    /**
+//     * 从url中获取图片名
+//     * @param url
+//     * @return
+//     */
+//    private String getPicNameFromUrl(String url){
+//        String fileName = "";
+//        Matcher fileNameMatch = picNamePattern.matcher(url);
+//        if (fileNameMatch.find()){
+//            fileName = fileNameMatch.group();
+//        }
+//        return fileName;
+//    }
 
     /**
-     * 从url中获取图片名
+     * 从url中获取图片信息
      * @param url
      * @return
      */
-    private String getPicNameFromUrl(String url){
-        String fileName = "";
+    private String[] getPicInfoFromUrl(String url){
+        String fileInfo = "";
         Matcher fileNameMatch = picNamePattern.matcher(url);
         if (fileNameMatch.find()){
-            fileName = fileNameMatch.group();
+            fileInfo = fileNameMatch.group();
         }
-        return fileName;
+        String[] fileInfos = fileInfo.split("/");
+        return fileInfos;
     }
 
     public static void main(String[] args) {
-        PostCrawler contentCrawler = new PostCrawler();
-        contentCrawler.crawlerContent("https://mp.weixin.qq.com/s?__biz=MzU2MTU0MzIxNg==&mid=2247483830&idx=1&sn=9bfe0e98be7938dbe8c55b16a116fc79&chksm=fc7660e9cb01e9ffca9990a6f4487ded4a53e471dd22c798d06c5548812b1a6f10f5e5774f15&scene=27#wechat_redirect", "MzU2MTU0MzIxNg==", 2);
+//        PostCrawler contentCrawler = new PostCrawler();
+//        contentCrawler.crawlerContent("https://mp.weixin.qq.com/s?__biz=MzU2MTU0MzIxNg==&mid=2247483830&idx=1&sn=9bfe0e98be7938dbe8c55b16a116fc79&chksm=fc7660e9cb01e9ffca9990a6f4487ded4a53e471dd22c798d06c5548812b1a6f10f5e5774f15&scene=27#wechat_redirect", "MzU2MTU0MzIxNg==", 2);
+
+        String url = "gif/lv8zajRJMynWJeHZV9zbnd7bvHcmBEndYThMqIl6x4sFvLSUaJS2FbL7nmjQSqqHnqK1EFRiaozESGCQG2ksw4Q";
+
+        System.out.println(Arrays.toString(url.split("/")));
     }
 
 
