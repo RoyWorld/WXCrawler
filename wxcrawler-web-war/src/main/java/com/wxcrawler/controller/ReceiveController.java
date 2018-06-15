@@ -18,6 +18,9 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.SyncFailedException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -42,6 +45,10 @@ public class ReceiveController {
     @Autowired
     IWeixinServiceImpl iWeixinService;
 
+    private String uin;
+    private String key;
+    private String pass_ticket;
+
     @ResponseBody
     @RequestMapping(value = "/getMsgJson", method = RequestMethod.POST)
     public Object getMsgJson(String str, String url) {
@@ -50,8 +57,15 @@ public class ReceiveController {
             MultiValueMap<String, String> parameters = UriComponentsBuilder.fromUriString(URLDecoder.decode(url, "UTF-8")).build().getQueryParams();
             //得到公众号的biz
             String biz = parameters.get("__biz").get(0);
+
+            //得到必要的参数
+            uin = parameters.get("uin").get(0);
+            key = parameters.get("key").get(0);
+            pass_ticket = parameters.get("pass_ticket").get(0);
+
             //接下来进行以下操作
             //从数据库中查询biz是否已经存在，如果不存在则插入，这代表着我们新添加了一个采集目标公众号
+            insertWeixin(biz);
 
             //再解析str变量
             //首先进行json_decode
@@ -86,6 +100,8 @@ public class ReceiveController {
                         String title_encode = URLEncoder.encode(title.replace("", "&nbsp;"), "UTF-8");
                         //文章摘要
                         String digest = (String) getJsonProperty(value, "app_msg_ext_info", "digest");
+                        //建议将标题进行编码，这样就可以存储emoji特殊符号了
+                        String digest_encode = URLEncoder.encode(digest.replace("", "&nbsp;"), "UTF-8");
                         //阅读原文的链接
                         String source_url = htmlSpecialCharsDecode((String) getJsonProperty(value, "app_msg_ext_info", "source_url")).replace("\\", "");
                         //封面图片
@@ -94,7 +110,10 @@ public class ReceiveController {
                         int is_top = 1;
 
                         //现在存入数据库
-                        save(biz, title, fileid, title_encode, digest, content_url, source_url, cover, is_multi, is_top, datetime);
+                        savePost(biz, fileid, title_encode, digest_encode, content_url, source_url, cover, is_multi, is_top, datetime);
+                        if (exsistContentUrlInTmplist(content_url)){
+                            saveTmp(content_url);
+                        }
                         logger.debug("头条标题：" + title);
                     }
                     //如果是多图文消息
@@ -116,14 +135,19 @@ public class ReceiveController {
                                 //建议将标题进行编码，这样就可以存储emoji特殊符号了
                                 String title_encode = URLEncoder.encode(title.replace("", "&nbsp;"), "UTF-8");
                                 //文章摘要
-                                String digest = htmlSpecialCharsDecode((String) msg_item_value.get("digest"));
+                                String digest = (String) msg_item_value.get("digest");
+                                //文章摘要
+                                String digest_encode = URLEncoder.encode(digest.replace("", "&nbsp;"), "UTF-8");
                                 //阅读原文的链接
                                 String source_url = htmlSpecialCharsDecode((String) msg_item_value.get("source_url")).replace("\\", "");
                                 //封面图片
                                 String cover = htmlSpecialCharsDecode((String) msg_item_value.get("cover")).replace("\\", "");
 
                                 //现在存入数据库
-                                save(biz, title, fileid, title_encode, digest, content_url, source_url, cover, is_multi, 0, datetime);
+                                savePost(biz, fileid, title_encode, digest_encode, msg_item_content_url, source_url, cover, is_multi, 0, datetime);
+                                if (exsistContentUrlInTmplist(msg_item_content_url)){
+                                    saveTmp(msg_item_content_url);
+                                }
                                 logger.debug("标题：" + title);
                             }
 
@@ -139,6 +163,22 @@ public class ReceiveController {
         Map<String, Object> result = new HashMap<>(16);
         result.put("msg", "success");
         return result;
+    }
+
+    /**
+     * 从数据库中查询biz是否已经存在，如果不存在则插入，这代表着我们新添加了一个采集目标公众号
+     * @param biz
+     */
+    private void insertWeixin(String biz){
+        Map<String, Object> condition = new HashMap<>(16);
+        condition.put("biz", biz);
+        Weixin weixin = iWeixinService.queryOne(condition);
+        if (weixin == null){
+            weixin = new Weixin();
+            weixin.setBiz(biz);
+            weixin.setCollect((int) (System.currentTimeMillis()/1000));
+            iWeixinService.insert(weixin);
+        }
     }
 
     /**
@@ -166,12 +206,23 @@ public class ReceiveController {
     }
 
     /**
+     * 根据content_url从数据库中判断一下是否重复
+     * @param content_url
+     * @return
+     */
+    private boolean exsistContentUrlInTmplist(String content_url) {
+        Map<String, Object> condition = new HashMap<>(16);
+        condition.put("content_url", new SearchField("content_url", "=", content_url));
+        Tmplist tmplist = iTmplistService.queryOne(condition);
+        return tmplist == null;
+    }
+
+    /**
      * post存入数据库
      * @param biz
-     * @param title
      * @param fileid
      * @param title_encode
-     * @param digest
+     * @param digest_encode
      * @param content_url
      * @param source_url
      * @param cover
@@ -179,13 +230,14 @@ public class ReceiveController {
      * @param is_top
      * @param datetime
      */
-    private void save(String biz, String title, int fileid, String title_encode, String digest, String content_url, String source_url, String cover, int is_multi, int is_top, int datetime) {
+    private void savePost(String biz, int fileid, String title_encode, String digest_encode, String content_url, String source_url, String cover, int is_multi, int is_top, int datetime) {
         Post newPost = new Post();
         newPost.setBiz(biz);
         newPost.setFieldId(fileid);
-        newPost.setTitle(title);
+        newPost.setTitle("");
         newPost.setTitleEncode(title_encode);
-        newPost.setDigest(digest);
+        newPost.setDigest("");
+        newPost.setDigestEncode(digest_encode);
         newPost.setContentUrl(content_url);
         newPost.setSourceUrl(source_url);
         newPost.setCover(cover);
@@ -194,7 +246,19 @@ public class ReceiveController {
         newPost.setDatetime(datetime);
         newPost.setReadNum(1);//set default
         newPost.setLikeNum(0);//set default
+        newPost.setIsExsist(0);//set default
         iPostService.insert(newPost);
+    }
+
+    /**
+     * tmplist存入数据库
+     * @param content_url
+     */
+    private void saveTmp(String content_url){
+        Tmplist tmplist = new Tmplist();
+        tmplist.setContentUrl(content_url);
+        tmplist.setLoading(0);
+        iTmplistService.insert(tmplist);
     }
 
     /**
@@ -261,41 +325,62 @@ public class ReceiveController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/getWxHis?flag={flag}", method = RequestMethod.GET)
-    public Object getWxHis(@PathVariable Integer flag) {
+    @RequestMapping(value = "/getWxHis", method = RequestMethod.GET)
+    public void getWxHis(Integer flag, Integer isGetHistory, HttpServletResponse response) throws InterruptedException, IOException {
         //在采集队列表中有一个loading字段，当值等于1时代表正在被读取
         //首先删除采集队列表中loading=1的行
         Map<String, Object> condition = new HashMap<>(16);
-        condition.put("loading", new SearchField("loading", "=", 1));
-        iTmplistService.deleteByCondition(condition);
+//        condition.put("loading", new SearchField("loading", "=", new Integer(1)));
+//        iTmplistService.deleteByCondition(condition);
 
         //然后从队列表中任意select一行
-        Tmplist tmplist = iTmplistService.queryOne(new HashMap<>());
+        condition.put("loading", new SearchField("loading", "=", new Integer(0)));
+        Tmplist tmplist = iTmplistService.queryOne(condition);
         //队列表为空
         String url = "";
         if(tmplist == null){
-            //队列表如果空了，就从存储公众号biz的表中取得一个biz，这里我在公众号表中设置了一个采集时间的time字段，按照正序排列之后，就得到时间戳最小的一个公众号记录，并取得它的biz
-            Map<String, Object> orderMap = new HashMap<>(16);
-            orderMap.put("collect", "desc");
-            Weixin weixin = iWeixinService.queryOne(new HashMap<>(), orderMap);
-            //拼接公众号历史消息url地址（第一种页面形式）
-            url = "http://mp.weixin.qq.com/mp/getmasssendmsg?__biz=" + weixin.getBiz() + "#wechat_webview_type=1&wechat_redirect";
-            if (flag != 1){
-                //拼接公众号历史消息url地址（第二种页面形式）
-                url = "https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=" + weixin.getBiz() + "&scene=124#wechat_redirect";
+            //判断是否爬取最新的公众号
+            if (isGetHistory == 0){
+                //队列表如果空了，就从存储公众号biz的表中取得一个biz，这里我在公众号表中设置了一个采集时间的time字段，按照正序排列之后，就得到时间戳最小的一个公众号记录，并取得它的biz
+                Weixin weixin = null;
+                while (weixin == null) {
+                    Thread.sleep(10 * 1000);
+                    Map<String, Object> orderMap = new HashMap<>(16);
+                    orderMap.put("collect", "desc");
+                    weixin = iWeixinService.queryOne(new HashMap<>(), orderMap);
+                }
+
+                //拼接公众号历史消息url地址（第一种页面形式）
+                url = "https://mp.weixin.qq.com/mp/getmasssendmsg?__biz=" + weixin.getBiz() + "#wechat_webview_type=1&wechat_redirect";
+                if (flag != 1){
+                    //拼接公众号历史消息url地址（第二种页面形式）
+                    url = "https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=" + weixin.getBiz() + "&scene=124#wechat_redirect";
+                }
+                //更新刚才提到的公众号表中的采集时间time字段为当前时间戳。
+                weixin.setCollect((int) (System.currentTimeMillis()/1000));
+                iWeixinService.update(weixin);
+            }else {
+                //将下一个将要跳转的$url变成js脚本，由anyproxy注入到微信页面中。
+                response.setCharacterEncoding("UTF-8");
+                response.setContentType("text/html; charset=UTF-8");
+                PrintWriter out = response.getWriter();
+                out.print("<script>setInterval(function(){window.scrollBy(0,50);},2000);</script>");
+                out.close();
             }
-            //更新刚才提到的公众号表中的采集时间time字段为当前时间戳。
-            weixin.setCollect((int) (System.currentTimeMillis()/1000));
-            iWeixinService.update(weixin);
         }else{
             //取得当前这一行的content_url字段
-            url = tmplist.getContentUrl();
+            url = tmplist.getContentUrl() + "&uin=" + uin + "&key=" + key + "&pass_ticket=" + pass_ticket;
             //将loading字段update为1
             tmplist.setLoading(1);
             iTmplistService.update(tmplist);
         }
+
         //将下一个将要跳转的$url变成js脚本，由anyproxy注入到微信页面中。
-        return "<script>setTimeout(function(){window.location.href='" + url + "';},2000);</script>";
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        out.print("<script>setTimeout(function(){window.location.href='" + url + "';},2000);</script>");
+        out.close();
     }
 
 
@@ -304,24 +389,24 @@ public class ReceiveController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/getWxPost?flag={flag}", method = RequestMethod.GET)
-    public Object getWxPost(@PathVariable int flag) {
+    @RequestMapping(value = "/getWxPost", method = RequestMethod.GET)
+    public void getWxPost(int flag, HttpServletResponse response) throws IOException {
         //首先删除采集队列表中loading=1的行
         Map<String, Object> condition = new HashMap<>(16);
-        condition.put("loading", new SearchField("loading", "=", 1));
-        iTmplistService.deleteByCondition(condition);
+//        condition.put("loading", new SearchField("loading", "=", 1));
+//        iTmplistService.deleteByCondition(condition);
 
         //然后从队列表中按照“order by id asc”选择多行(注意这一行和上面的程序不一样)
         Map<String, Object> orderMap = new HashMap<>(16);
         orderMap.put("id", "asc");
-        condition.clear();
+        condition.put("loading", new SearchField("loading", "=", 0));
         List<Tmplist> tmplists = iTmplistService.queryList(condition, orderMap);
         //队列表为空
         String url = "";
         if(!tmplists.isEmpty() && tmplists.size() > 1){//(注意这一行和上面的程序不一样)
             //取得第0行的content_url字段
             Tmplist tmplist = tmplists.get(0);
-            url = tmplists.get(0).getContentUrl();
+            url = tmplists.get(0).getContentUrl() + "&uin=" + uin + "&key=" + key + "&pass_ticket=" + pass_ticket;
             //将第0行的loading字段update为1
             //将loading字段update为1
             tmplist.setLoading(1);
@@ -332,7 +417,7 @@ public class ReceiveController {
             orderMap.put("collect", "desc");
             Weixin weixin = iWeixinService.queryOne(new HashMap<>(), orderMap);
             //拼接公众号历史消息url地址（第一种页面形式）
-            url = "http://mp.weixin.qq.com/mp/getmasssendmsg?__biz=" + weixin.getBiz() + "#wechat_webview_type=1&wechat_redirect";
+            url = "https://mp.weixin.qq.com/mp/getmasssendmsg?__biz=" + weixin.getBiz() + "#wechat_webview_type=1&wechat_redirect";
             if (flag != 1){
                 //拼接公众号历史消息url地址（第二种页面形式）
                 url = "https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=" + weixin.getBiz() + "&scene=124#wechat_redirect";
@@ -342,6 +427,10 @@ public class ReceiveController {
             iWeixinService.update(weixin);
         }
         //将下一个将要跳转的$url变成js脚本，由anyproxy注入到微信页面中。
-        return "<script>setTimeout(function(){window.location.href='" + url + "';},2000);</script>";
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        out.print("<script>setTimeout(function(){window.location.href='" + url + "';},2000);</script>");
+        out.close();
     }
 }

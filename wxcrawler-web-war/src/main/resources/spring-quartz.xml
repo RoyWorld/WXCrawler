@@ -22,7 +22,7 @@
     </bean>
     <bean id="scanTmpListTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="scanTmpListJobTask"/>
-        <property name="cronExpression" value="0 10 * * * ?"/><!-- 每隔10分钟执行一次 -->
+        <property name="cronExpression" value="0 0/3 * * * ?"/><!-- 每隔3分钟执行一次 -->
         <!--测试-->
         <!--<property name="cronExpression" value="0 0/10 * * * ?"/>-->
     </bean>
