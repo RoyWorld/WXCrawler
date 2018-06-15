@@ -38,14 +38,14 @@ public class PostCrawler {
 
     Logger logger = LoggerFactory.getLogger(PostCrawler.class);
 
-    //正则匹配获取公众号名
+    //正则匹配获取图片源
     private Pattern picsrcPattern = Pattern.compile("data-src=\"(.*?)\"");
 
     //正则匹配获取公众号名
-    private Pattern nickNamePattern = Pattern.compile("var nickname = \"(.*?)\";/si");
+    private Pattern nickNamePattern = Pattern.compile("(?<=var\\snickname\\s=\\s\").*(?=\")");
 
     //正则匹配获取公众号头像
-    private Pattern headImgPattern = Pattern.compile("var round_head_img = \"(.*?)\";/si");
+    private Pattern headImgPattern = Pattern.compile("(?<=var\\sround_head_img\\s=\\s\").*(?=\")");
 
     //正则匹配获取图片名
     private Pattern picNamePattern = Pattern.compile("(?<=mmbiz_).*(?=/)");
@@ -96,19 +96,19 @@ public class PostCrawler {
             }
 
             //公众号头像
-            String headImg = "";
+            String avatar = "";
             Matcher headImgMatcher = headImgPattern.matcher(doc.html());
             if (headImgMatcher.find()){
-                headImg = headImgMatcher.group();
+                avatar = headImgMatcher.group();
             }
 
             Map<String, Object> condition = new HashMap<>(16);
             condition.put("biz", biz);
             Map<String, Object> updateMap = new HashMap<>(16);
             updateMap.put("nickName", nickName);
-            updateMap.put("headImg", headImg);
+            updateMap.put("avatar", avatar);
             updateMap.put("collect", System.currentTimeMillis()/1000);
-            iWeixinService.updateByCondition(condition, updateMap);
+            iWeixinService.updateByCondition(updateMap, condition);
 
             //保存html
             saveHtml(content_Str, biz, id);
@@ -226,13 +226,13 @@ public class PostCrawler {
         return fileInfos;
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws UnsupportedEncodingException {
 //        PostCrawler contentCrawler = new PostCrawler();
 //        contentCrawler.crawlerContent("https://mp.weixin.qq.com/s?__biz=MzU2MTU0MzIxNg==&mid=2247483830&idx=1&sn=9bfe0e98be7938dbe8c55b16a116fc79&chksm=fc7660e9cb01e9ffca9990a6f4487ded4a53e471dd22c798d06c5548812b1a6f10f5e5774f15&scene=27#wechat_redirect", "MzU2MTU0MzIxNg==", 2);
 
-        String url = "gif/lv8zajRJMynWJeHZV9zbnd7bvHcmBEndYThMqIl6x4sFvLSUaJS2FbL7nmjQSqqHnqK1EFRiaozESGCQG2ksw4Q";
+        String url = "土地政策大变革 房价要跌30%？";
 
-        System.out.println(Arrays.toString(url.split("/")));
+        System.out.println(URLDecoder.decode(url, "UTF-8"));
     }
 
 

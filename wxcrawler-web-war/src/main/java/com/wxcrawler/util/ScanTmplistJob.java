@@ -75,6 +75,7 @@ public class ScanTmplistJob {
         condition.put("loading", new SearchField("loading", "=", 1));
         List<Tmplist> tmplists = iTmplistService.queryList(condition);
 
+        //爬取文章数据
         executeCrawler(tmplists);
     }
 
@@ -107,6 +108,7 @@ public class ScanTmplistJob {
         @Override
         public void run() {
             logger.debug(String.format("------------ %s开始爬取 ------------", Thread.currentThread().getName()));
+
             //找到原文章
             Map<String, Object> postCondition = new HashMap<>();
             postCondition.put("content_url",  new SearchField("content_url", "=", tmplist.getContentUrl()));
@@ -116,7 +118,8 @@ public class ScanTmplistJob {
             //爬取文章
             postCrawler.crawlerContent(tmplist.getContentUrl(), post.getBiz(), post.getId());
 
-            tmplist.setLoading(0);
+            //更新tmplist为2
+            tmplist.setLoading(2);
             iTmplistService.update(tmplist);
 
             post.setIsExsist(1);
