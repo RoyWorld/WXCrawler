@@ -14,6 +14,9 @@ import com.wxcrawler.service.MyAbstractPageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Map;
+
 
 @Service("IWeixinServiceImpl")
 public class IWeixinServiceImpl extends MyAbstractPageService<IMyBaseDAO, Weixin> implements IWeixinFacade{
@@ -23,5 +26,11 @@ public class IWeixinServiceImpl extends MyAbstractPageService<IMyBaseDAO, Weixin
     @Override
     public IWeixinDAO getDao() {
         return dao;
+    }
+
+
+    @Override
+    public List<Map<String, Object>> getWXList(Integer offset, Integer rows) {
+        return dao.getWXList(offset, rows);
     }
 }

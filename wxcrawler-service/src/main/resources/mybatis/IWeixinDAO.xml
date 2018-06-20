@@ -263,5 +263,37 @@
     </select>
 
 
+    <select id="getWXList" resultType="java.util.HashMap">
+        SELECT
+            weixinId,
+            weixinBiz,
+            weixinName,
+            weixinAvatar,
+            postId,
+            postUrl,
+            postTitle,
+            postTime
+        FROM
+            (
+                SELECT
+                    twx.id AS weixinId,
+                    twx.biz AS weixinBiz,
+                    twx.nickName AS weixinName,
+                    twx.avatar AS weixinAvatar,
+                    tp.id AS postId,
+                    tp.content_url AS postUrl,
+                    tp.title_encode AS postTitle,
+                    tp.datetime AS postTime
+                FROM
+                    tb_weixin twx
+                JOIN tb_post tp ON twx.biz = tp.biz
+                ORDER BY
+                    tp.datetime DESC
+            ) p
+        GROUP BY
+            p.weixinBiz
+        limit ${offset}, ${rows}
+    </select>
+
 </mapper>
 

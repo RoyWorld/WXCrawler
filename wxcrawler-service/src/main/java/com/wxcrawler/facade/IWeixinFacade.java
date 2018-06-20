@@ -10,6 +10,10 @@ import com.wxcrawler.domain.Weixin;
 import com.wxcrawler.service.IMyBaseDAO;
 import com.wxcrawler.service.IMyPersistenceProvider;
 
+import java.util.List;
+import java.util.Map;
+
 public interface IWeixinFacade extends IMyPersistenceProvider<IMyBaseDAO, Weixin> {
 
+    List<Map<String, Object>> getWXList(Integer offset, Integer rows);
 }
