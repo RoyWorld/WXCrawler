@@ -99,7 +99,18 @@ public class PostCrawler {
             String avatar = "";
             Matcher headImgMatcher = headImgPattern.matcher(doc.html());
             if (headImgMatcher.find()){
-                avatar = headImgMatcher.group();
+                String avatarUrl = headImgMatcher.group();
+                String[] fileInfos = getPicInfoFromUrl(avatarUrl);
+                String picName = fileInfos[1];
+
+                //从url中获取图片类型
+                String picType = fileInfos[0];
+
+                //图片文件完整名称
+                String picFileName = picName + "." + picType;
+                savePic(avatarUrl, rootPath + "//" + biz, picFileName, picType);
+
+                avatar = picFileName;
             }
 
             Map<String, Object> condition = new HashMap<>(16);
