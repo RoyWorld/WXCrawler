@@ -1,6 +1,7 @@
 package com.wxcrawler.controller;
 
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import com.wxcrawler.domain.Post;
 import com.wxcrawler.domain.SearchField;
@@ -29,6 +30,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by RoyChan on 2018/5/31.
@@ -48,6 +51,11 @@ public class ReceiveController {
     private String uin;
     private String key;
     private String pass_ticket;
+
+    //正则匹配获取图片名
+    private Pattern picNamePattern = Pattern.compile("(?<=mmbiz_).*(?=/)");
+
+    Pattern jsonErrorPattern = Pattern.compile("(?<=title\":\")[^\"]{0,10}\"[^\"]{0,10}\"");
 
     @ResponseBody
     @RequestMapping(value = "/getMsgJson", method = RequestMethod.POST)
@@ -71,7 +79,20 @@ public class ReceiveController {
             //首先进行json_decode
             str = htmlSpecialCharsDecode(str);
 //            logger.error(String.format("str: %s", str));
-            JSONObject json = (JSONObject) JSONArray.parse(str);
+            JSONObject json;
+            try{
+                json = (JSONObject) JSONArray.parse(str);
+            }catch (JSONException e){
+                String jsonRex = "";
+                Matcher jsonRexMatch = jsonErrorPattern.matcher(str);
+                if (jsonRexMatch.find()){
+                    jsonRex = jsonRexMatch.group();
+                }
+                jsonRex = jsonRex.substring(1, jsonRex.length()-1);
+
+                str = str.replaceAll("(?<=title\":\")[^\"]{0,10}\"[^\"]{0,10}\"", jsonRex);
+                json = (JSONObject) JSONArray.parse(str);
+            }
 
             JSONArray list = (JSONArray) json.get("list");
             Iterator iterator = list.iterator();
@@ -97,11 +118,11 @@ public class ReceiveController {
                         //文章标题
                         String title = (String) getJsonProperty(value, "app_msg_ext_info", "title");
                         //建议将标题进行编码，这样就可以存储emoji特殊符号了
-                        String title_encode = URLEncoder.encode(title.replace("", "&nbsp;"), "UTF-8");
+                        String title_encode = URLEncoder.encode(title.replace(" ", "&nbsp;"), "UTF-8");
                         //文章摘要
                         String digest = (String) getJsonProperty(value, "app_msg_ext_info", "digest");
                         //建议将标题进行编码，这样就可以存储emoji特殊符号了
-                        String digest_encode = URLEncoder.encode(digest.replace("", "&nbsp;"), "UTF-8");
+                        String digest_encode = URLEncoder.encode(digest.replace(" ", "&nbsp;"), "UTF-8");
                         //阅读原文的链接
                         String source_url = htmlSpecialCharsDecode((String) getJsonProperty(value, "app_msg_ext_info", "source_url")).replace("\\", "");
                         //封面图片
@@ -133,11 +154,11 @@ public class ReceiveController {
                                 //一个微信给的id
                                 int fileid = (int) msg_item_value.get("fileid");
                                 //建议将标题进行编码，这样就可以存储emoji特殊符号了
-                                String title_encode = URLEncoder.encode(title.replace("", "&nbsp;"), "UTF-8");
+                                String title_encode = URLEncoder.encode(title.replace(" ", "&nbsp;"), "UTF-8");
                                 //文章摘要
                                 String digest = (String) msg_item_value.get("digest");
                                 //文章摘要
-                                String digest_encode = URLEncoder.encode(digest.replace("", "&nbsp;"), "UTF-8");
+                                String digest_encode = URLEncoder.encode(digest.replace(" ", "&nbsp;"), "UTF-8");
                                 //阅读原文的链接
                                 String source_url = htmlSpecialCharsDecode((String) msg_item_value.get("source_url")).replace("\\", "");
                                 //封面图片
@@ -231,6 +252,9 @@ public class ReceiveController {
      * @param datetime
      */
     private void savePost(String biz, int fileid, String title_encode, String digest_encode, String content_url, String source_url, String cover, int is_multi, int is_top, int datetime) {
+        String[] coverPic = getPicInfoFromUrl(cover);
+        cover = coverPic[0] + coverPic[1];
+
         Post newPost = new Post();
         newPost.setBiz(biz);
         newPost.setFieldId(fileid);
@@ -432,5 +456,20 @@ public class ReceiveController {
         PrintWriter out = response.getWriter();
         out.print("<script>setTimeout(function(){window.location.href='" + url + "';},2000);</script>");
         out.close();
+    }
+
+    /**
+     * 从url中获取图片信息
+     * @param url
+     * @return
+     */
+    private String[] getPicInfoFromUrl(String url){
+        String fileInfo = "";
+        Matcher fileNameMatch = picNamePattern.matcher(url);
+        if (fileNameMatch.find()){
+            fileInfo = fileNameMatch.group();
+        }
+        String[] fileInfos = fileInfo.split("/");
+        return fileInfos;
     }
 }
