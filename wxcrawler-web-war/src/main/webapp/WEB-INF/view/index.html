@@ -6,21 +6,21 @@
             <div class="hy-ability-item">
                 <div class="circle active">
                     <div class="word active">
-                        <a href="./index">看</a>
-                    </div>
-                </div>
-            </div>
-            <div class="hy-ability-item">
-                <div class="circle">
-                    <div class="word】">
-                        <a href="./query">查</a>
+                        <a href="/index">看</a>
                     </div>
                 </div>
             </div>
             <div class="hy-ability-item">
                 <div class="circle">
                     <div class="word">
-                        <a href="./query">用</a>
+                        <a href="/query">查</a>
+                    </div>
+                </div>
+            </div>
+            <div class="hy-ability-item">
+                <div class="circle">
+                    <div class="word">
+                        <a href="/use">用</a>
                     </div>
                 </div>
             </div>
@@ -34,11 +34,11 @@
                     </div>
                     <div class="item" ng-repeat="weixin in weixinList | orderBy : '-createDate'" on-finish-render-filters="1">
                         <div class="itemRow">
-                            <span class="title"><img class="avatar" ng-src="{{weixin.avatar}}" alt="avatar">{{weixin.nickName}}</span>
+                            <div class="title"><img class="avatar" ng-src="index/avatar/{{weixin.weixinBiz}}/{{weixin.weixinAvatar}}/" alt="avatar"/><a href="/index/openWeixin">{{weixin.weixinName}}</a></div>
                         </div>
                         <div class="itemRow">
-                            <span href="#" class="message">{{weixin.message}}</span>
-                            <span class="status">{{weixin.datetime}}</span>
+                            <span href="#" class="message">{{weixin.postTitle}}</span>
+                            <span class="status">{{weixin.postTime}}</span>
                         </div>
                     </div>
 
