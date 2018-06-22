@@ -10,6 +10,7 @@ import com.wxcrawler.domain.Weixin;
 import com.wxcrawler.service.impl.IPostServiceImpl;
 import com.wxcrawler.service.impl.ITmplistServiceImpl;
 import com.wxcrawler.service.impl.IWeixinServiceImpl;
+import com.wxcrawler.util.PicUtil;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,13 +20,15 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.SyncFailedException;
-import java.io.UnsupportedEncodingException;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -52,10 +55,9 @@ public class ReceiveController {
     private String key;
     private String pass_ticket;
 
-    //正则匹配获取图片名
-    private Pattern picNamePattern = Pattern.compile("(?<=mmbiz_).*(?=/)");
-
     Pattern jsonErrorPattern = Pattern.compile("(?<=title\":\")[^\"]{0,10}\"[^\"]{0,10}\"");
+
+    private String rootPath = "E:\\公众号";
 
     @ResponseBody
     @RequestMapping(value = "/getMsgJson", method = RequestMethod.POST)
@@ -252,8 +254,8 @@ public class ReceiveController {
      * @param datetime
      */
     private void savePost(String biz, int fileid, String title_encode, String digest_encode, String content_url, String source_url, String cover, int is_multi, int is_top, int datetime) {
-        String[] coverPic = getPicInfoFromUrl(cover);
-        cover = coverPic[0] + coverPic[1];
+        String[] coverPicInfo = PicUtil.getPicInfoFromUrl(cover);
+        String coverPic = coverPicInfo[1] + "." + coverPicInfo[0];
 
         Post newPost = new Post();
         newPost.setBiz(biz);
@@ -272,6 +274,8 @@ public class ReceiveController {
         newPost.setLikeNum(0);//set default
         newPost.setIsExsist(0);//set default
         iPostService.insert(newPost);
+
+        PicUtil.savePic(cover, rootPath + String.format("//%s//%s", biz, newPost.getId()), coverPic, coverPicInfo[1]);
     }
 
     /**
@@ -458,18 +462,4 @@ public class ReceiveController {
         out.close();
     }
 
-    /**
-     * 从url中获取图片信息
-     * @param url
-     * @return
-     */
-    private String[] getPicInfoFromUrl(String url){
-        String fileInfo = "";
-        Matcher fileNameMatch = picNamePattern.matcher(url);
-        if (fileNameMatch.find()){
-            fileInfo = fileNameMatch.group();
-        }
-        String[] fileInfos = fileInfo.split("/");
-        return fileInfos;
-    }
 }

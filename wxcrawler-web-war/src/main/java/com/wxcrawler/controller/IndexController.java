@@ -1,6 +1,7 @@
 package com.wxcrawler.controller;
 
 import com.wxcrawler.service.impl.IWeixinServiceImpl;
+import com.wxcrawler.util.DecodeUtil;
 import com.wxcrawler.util.PropertiesHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
@@ -76,19 +77,10 @@ public class IndexController {
         List<Map<String, Object>> wxList = iWeixinService.getWXList(offset, rows);
         for (int i = 0; i < wxList.size(); i++) {
             Map<String, Object> wx = wxList.get(i);
-            wx.put("postTime", decodeTime((Integer) wx.get("postTime")));
-            wx.put("postTitle", decodeTitle((String) wx.get("postTitle")));
+            wx.put("postTitle", DecodeUtil.decodeTitle((String) wx.get("postTitle")));
             wxList.set(i, wx);
         }
         return wxList;
-    }
-
-    private Date decodeTime(long time){
-        return new Date(time * 1000);
-    }
-
-    private String decodeTitle(String title_encode) throws UnsupportedEncodingException {
-        return URLDecoder.decode(title_encode, "UTF-8");
     }
 
 }
