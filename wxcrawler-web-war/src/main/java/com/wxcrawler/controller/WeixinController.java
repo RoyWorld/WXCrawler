@@ -168,6 +168,7 @@ public class WeixinController {
         String path = sc.getRealPath("/");
         ResourceLoader resourceLoader = new DefaultResourceLoader();
         Resource resource = resourceLoader.getResource("file:" + path + "/WEB-INF/view/article.html");
+        //将本地文件写到article中
         FileOutputStream outputStreamWriter = new FileOutputStream(resource.getFile());
         outputStreamWriter.write(content_Str.getBytes());
         ModelAndView modelAndView = new ModelAndView("post");
