@@ -1,6 +1,5 @@
 package com.wxcrawler.util;
 
-import com.wxcrawler.domain.Weixin;
 import com.wxcrawler.service.impl.IWeixinServiceImpl;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.jsoup.Jsoup;
@@ -10,18 +9,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.*;
-import java.net.URL;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
@@ -47,15 +43,12 @@ public class PostCrawler {
     //正则匹配获取公众号头像
     private Pattern headImgPattern = Pattern.compile("(?<=var\\sround_head_img\\s=\\s\").*(?=\")");
 
-    //正则匹配获取图片名
-    private Pattern picNamePattern = Pattern.compile("(?<=mmbiz_).*(?=/)");
-
     private String rootPath = "E:\\公众号";
 
     @Autowired
     IWeixinServiceImpl iWeixinService;
 
-    public void crawlerContent(String url, String biz, int id){
+    public void crawlerContent(String url, String biz, int id) {
         try {
             Document doc = Jsoup.connect(url).get();
             Element content = doc.select("#js_content").get(0);
@@ -64,10 +57,10 @@ public class PostCrawler {
             //$content变量的值是前面获取到的文章内容html
             content_Str = replaceTextOfMatchGroup(content_Str, picsrcPattern, 0, srcStr -> {
                 int index = srcStr.indexOf("=");
-                String picUrl = srcStr.substring(index+2, srcStr.length()-1);
+                String picUrl = srcStr.substring(index + 2, srcStr.length() - 1);
                 srcStr = srcStr.replace("data-src", "src");
                 //从url中获取图片名
-                String[] fileInfos = getPicInfoFromUrl(picUrl);
+                String[] fileInfos = PicUtil.getPicInfoFromUrl(picUrl);
                 String picName = fileInfos[1];
 
                 //从url中获取图片类型
@@ -80,7 +73,7 @@ public class PostCrawler {
                 srcStr = srcStr.replaceAll("(?<=src\\=\\\").*(?=\\\")", picFileName);
 
                 //保存图片
-                savePic(picUrl, rootPath + String.format("//%s//%s", biz, id), picFileName, picType);
+                PicUtil.savePic(picUrl, rootPath + String.format("//%s//%s", biz, id), picFileName, picType);
 
                 return srcStr;
             });
@@ -91,16 +84,16 @@ public class PostCrawler {
             //公众号昵称
             String nickName = "";
             Matcher nickNameMatcher = nickNamePattern.matcher(doc.html());
-            if (nickNameMatcher.find()){
+            if (nickNameMatcher.find()) {
                 nickName = nickNameMatcher.group();
             }
 
             //公众号头像
             String avatar = "";
             Matcher headImgMatcher = headImgPattern.matcher(doc.html());
-            if (headImgMatcher.find()){
+            if (headImgMatcher.find()) {
                 String avatarUrl = headImgMatcher.group();
-                String[] fileInfos = getPicInfoFromUrl(avatarUrl);
+                String[] fileInfos = PicUtil.getPicInfoFromUrl(avatarUrl);
                 String picName = fileInfos[1];
 
                 //从url中获取图片类型
@@ -108,7 +101,7 @@ public class PostCrawler {
 
                 //图片文件完整名称
                 String picFileName = picName + "." + picType;
-                savePic(avatarUrl, rootPath + "//" + biz, picFileName, picType);
+                PicUtil.savePic(avatarUrl, rootPath + "//" + biz, picFileName, picType);
 
                 avatar = picFileName;
             }
@@ -118,7 +111,7 @@ public class PostCrawler {
             Map<String, Object> updateMap = new HashMap<>(16);
             updateMap.put("nickName", nickName);
             updateMap.put("avatar", avatar);
-            updateMap.put("collect", System.currentTimeMillis()/1000);
+            updateMap.put("collect", System.currentTimeMillis() / 1000);
             iWeixinService.updateByCondition(updateMap, condition);
 
             //保存html
@@ -131,13 +124,14 @@ public class PostCrawler {
 
     /**
      * 替换匹配的字符串
+     *
      * @param sourceString
      * @param pattern
      * @param groupToReplace
      * @param replaceStrategy
      * @return
      */
-    public String replaceTextOfMatchGroup(String sourceString, Pattern pattern, int groupToReplace, Function<String,String> replaceStrategy) {
+    public String replaceTextOfMatchGroup(String sourceString, Pattern pattern, int groupToReplace, Function<String, String> replaceStrategy) {
         Stack<Integer> startPositions = new Stack<>();
         Stack<Integer> endPositions = new Stack<>();
         Matcher matcher = pattern.matcher(sourceString);
@@ -160,6 +154,7 @@ public class PostCrawler {
 
     /**
      * 将文章内容的html以数据库id为文件名保存成html文件，以biz字段为目录。
+     *
      * @param content
      * @param biz
      * @param id
@@ -173,30 +168,12 @@ public class PostCrawler {
             FileOutputStream fileOutputStream = new FileOutputStream(htmlFile);
             fileOutputStream.write(content.getBytes());
             fileOutputStream.close();
-        } catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
             logger.error(String.format("保存html失败，文件biz：%s, id：%s", biz, id));
         }
     }
 
-    /**
-     * 根据url保存图片
-     * @param urlStr
-     * @param path
-     */
-    public void savePic(String urlStr, String path, String picName, String picType){
-        try {
-            Files.createDirectories(Paths.get(path));
-            //保存图片
-            URL url = new URL(urlStr);
-            BufferedImage img = ImageIO.read(url);
-            File file = new File(path + "//" + picName);
-            ImageIO.write(img, picType, file);
-        } catch (Exception e) {
-            e.printStackTrace();
-            logger.error(String.format("保存图片失败，url：%s", urlStr));
-        }
-    }
 
 //    /**
 //     * 从url中的wx_fmt获取图片类型
@@ -222,20 +199,6 @@ public class PostCrawler {
 //        return fileName;
 //    }
 
-    /**
-     * 从url中获取图片信息
-     * @param url
-     * @return
-     */
-    private String[] getPicInfoFromUrl(String url){
-        String fileInfo = "";
-        Matcher fileNameMatch = picNamePattern.matcher(url);
-        if (fileNameMatch.find()){
-            fileInfo = fileNameMatch.group();
-        }
-        String[] fileInfos = fileInfo.split("/");
-        return fileInfos;
-    }
 
     public static void main(String[] args) throws UnsupportedEncodingException {
 //        PostCrawler contentCrawler = new PostCrawler();
