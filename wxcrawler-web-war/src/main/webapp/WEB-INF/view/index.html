@@ -34,11 +34,11 @@
                     </div>
                     <div class="item" ng-repeat="weixin in weixinList | orderBy : '-createDate'" on-finish-render-filters="1">
                         <div class="itemRow">
-                            <div class="title"><img class="avatar" ng-src="index/avatar/{{weixin.weixinBiz}}/{{weixin.weixinAvatar}}/" alt="avatar"/><a href="/index/openWeixin">{{weixin.weixinName}}</a></div>
+                            <div class="title"><img class="avatar" ng-src="index/avatar/{{weixin.weixinBiz}}/{{weixin.weixinAvatar}}/" alt="avatar"/><a ng-href="/index/weixin/openWeixin?biz={{weixin.weixinBiz}}&avatar={{weixin.weixinAvatar}}&name={{weixin.weixinName}}">{{weixin.weixinName}}</a></div>
                         </div>
                         <div class="itemRow">
                             <span href="#" class="message">{{weixin.postTitle}}</span>
-                            <span class="status">{{weixin.postTime}}</span>
+                            <span class="status">{{weixin.postTime * 1000 | date:'yyyy-MM-dd hh:mm:ss'}}</span>
                         </div>
                     </div>
 

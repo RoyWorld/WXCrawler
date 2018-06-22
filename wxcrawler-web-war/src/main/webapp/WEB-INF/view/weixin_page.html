@@ -2,7 +2,9 @@
 
 <div id="root" class="root" ng-app="modelApp" ng-controller="modelCtrl" >
     <div class="page-page" style="margin: 0px 300px;" scroll>
-        <input type="hidden" id="postFilePath" value="$!postFilePath"/>
+        <input type="hidden" id="biz" value="$!biz"/>
+        <input type="hidden" id="avatar" value="$!avatar"/>
+        <input type="hidden" id="name" value="$!name"/>
         <div class="hy-ability">
             <div class="hy-ability-item">
                 <div class="circle active">
@@ -32,20 +34,18 @@
                 <div>
                     <div class="titleRow">
                         <div class="weixinTitle">
-                            <span class="title"><img class="weixinAvatar" ng-src="/index/weixin/avatar/MzA3OTI2OTI5NA==/lv8zajRJMynNBuMSEMdCyJW3VQ2WxOHmglzTRolLIRicEG91QWHahTWy0kBfZib5Shia0wSOxeP7SU6omPiaia0ic7pw.png/" alt="avatar"/></span>
-                            <h style="font-size: 20px;margin: auto;">叶檀财经</h>
+                            <span class="title"><img class="weixinAvatar" ng-src="/index/weixin/avatar/{{biz}}/{{avatar}}/" alt="avatar"/></span>
+                            <h style="font-size: 20px;margin: auto;">{{weixiName}}</h>
                         </div>
                     </div>
-                    <div class="item" ng-repeat="weixin in weixinList | orderBy : '-createDate'" on-finish-render-filters="1">
+                    <div class="item" ng-repeat="post in postList | orderBy : '-createDate'" on-finish-render-filters="1">
 
                         <div class="itemRow">
-                            <span href="#" class="weixinMessage">{{weixin.postTitle}}</span>
-                            <img class="avatar" ng-src="/index/weixin/cover/MzA3OTI2OTI5NA==/85/lv8zajRJMylyCeBt9zONGKmEFuABKR7LNeIu79K8fFxibSJiaDPPPtbplJ9Rmw7g7F6QNxTFP3RxkWomszzq0gGw.jpeg/" alt="avatar"/>
-                        </div>
-                        <div class="itemRow">
-                            <span class="title">
-                                <span class="status">{{weixin.postTime}}</span>
-                            </span>
+                            <div class="postInfo">
+                                <p href="#" class="postMessage"><a ng-href="/index/weixin/openPost/{{post.biz}}/{{post.id}}">{{post.title}}</a></p>
+                                <p class="status">{{post.datetime * 1000 | date:'yyyy-MM-dd hh:mm:ss'}}</p>
+                            </div>
+                            <img class="postImg" ng-src="/index/weixin/cover/{{post.biz}}/{{post.id}}/{{post.cover}}/" alt="avatar"/>
                         </div>
                     </div>
 

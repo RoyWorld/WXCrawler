@@ -31,6 +31,6 @@ modelApp.controller('modelCtrl', ['$scope', '$rootScope', '$http', '$compile', '
     }
 
 
-    init();
+    // init();
 }]);
 
