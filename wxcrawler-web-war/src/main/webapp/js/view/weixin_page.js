@@ -11,6 +11,7 @@ modelApp.directive("scroll", function ($window, $http) {
         link: function(scope) {
             angular.element($window).bind("wheel", function() {
                 if (scope.page % 4 != 0) {
+                    scope.page++;
                     $http({
                         method: 'get',
                         url: modelUrl + "/getPostList?biz=" + scope.biz + "&page=" + scope.page,
@@ -21,7 +22,6 @@ modelApp.directive("scroll", function ($window, $http) {
                         scope.postList = scope.postList.concat(data.bizData.rows);
                         scope.$apply();
                     });
-                    scope.page++;
                 }
             });
         }
@@ -38,18 +38,35 @@ modelApp.controller('modelCtrl', ['$scope', '$rootScope', '$http', '$compile', '
 
     $scope.postList = [];
 
+    $scope.prePage = function () {
+        $scope.page--;
+        $scope.getPostList($scope.page);
+    }
 
-    function init() {
+    $scope.nextPage = function () {
+        $scope.page++;
+        $scope.getPostList($scope.page);
+    }
+
+    $scope.isSelected = function (page) {
+        return $scope.page == page ? true : false;
+    }
+
+    $scope.getPostList = function (page){
+        $scope.page = page;
         $http({
             method: 'get',
-            url: modelUrl + "/getPostList?biz=" + $scope.biz + "&page=" + $scope.page,
+            url: modelUrl + "/getPostList?biz=" + $scope.biz + "&page=" + page,
             headers: {
                 contentType: 'application/json;charset=UTF-8'
             }
         }).success(function (data, status) {
-            $scope.postList = $scope.postList.concat(data.bizData.rows);
-            $scope.page++;
+            $scope.postList = data.bizData.rows;
         });
+    }
+
+    function init() {
+        $scope.getPostList($scope.page);
     }
 
 

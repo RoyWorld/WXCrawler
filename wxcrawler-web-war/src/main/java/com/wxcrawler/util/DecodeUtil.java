@@ -14,7 +14,7 @@ public class DecodeUtil {
     }
 
     public static String decodeTitle(String title_encode) throws UnsupportedEncodingException {
-        return URLDecoder.decode(title_encode, "UTF-8");
+        return URLDecoder.decode(title_encode, "UTF-8").replace("&nbsp;", " ");
     }
 
 }
