@@ -48,6 +48,9 @@ public class PostCrawler {
     @Autowired
     IWeixinServiceImpl iWeixinService;
 
+    @Autowired
+    LogToDB logToDB;
+
     public void crawlerContent(String url, String biz, int id) {
         try {
             Document doc = Jsoup.connect(url).get();
@@ -119,6 +122,7 @@ public class PostCrawler {
 
         } catch (Exception e) {
             e.printStackTrace();
+            logToDB.insertLog(e, url);
         }
     }
 

@@ -10,6 +10,7 @@ import com.wxcrawler.domain.Weixin;
 import com.wxcrawler.service.impl.IPostServiceImpl;
 import com.wxcrawler.service.impl.ITmplistServiceImpl;
 import com.wxcrawler.service.impl.IWeixinServiceImpl;
+import com.wxcrawler.util.LogToDB;
 import com.wxcrawler.util.PicUtil;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.slf4j.Logger;
@@ -50,6 +51,8 @@ public class ReceiveController {
     ITmplistServiceImpl iTmplistService;
     @Autowired
     IWeixinServiceImpl iWeixinService;
+    @Autowired
+    LogToDB logToDB;
 
     private String uin;
     private String key;
@@ -85,6 +88,8 @@ public class ReceiveController {
             try{
                 json = (JSONObject) JSONArray.parse(str);
             }catch (JSONException e){
+                logToDB.insertLog(e, url);
+
                 String jsonRex = "";
                 Matcher jsonRexMatch = jsonErrorPattern.matcher(str);
                 if (jsonRexMatch.find()){
@@ -181,6 +186,7 @@ public class ReceiveController {
 
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
+            logToDB.insertLog(e, url);
         }
 
         Map<String, Object> result = new HashMap<>(16);

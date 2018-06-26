@@ -41,6 +41,13 @@ public class Log extends MyBaseDomain<Integer>{
 
 	public Log(){
 	}
+
+	public Log(String error, String str, String url) {
+		this.error = error;
+		this.str = str;
+		this.url = url;
+	}
+
 	/**
 	 *
 	 * @param value
