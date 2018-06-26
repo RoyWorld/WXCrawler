@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.wxcrawler.dao.ILogDAO">
+
+
+    <sql id="Base_Column_List">
+        id as id ,
+        error as error ,
+        str as str ,
+        url as url 
+    </sql>
+
+	<!-- 列表对应的查询条件组合  -->
+  <sql id="queryOptions">
+       <where>
+           <if test="condition.id!=null">
+               <if test="condition.id__!=null">
+                   AND tb_log.${condition.id.field} ${condition.id.op} #{condition.id.data}
+               </if>
+               <if test="condition.id__==null"> AND tb_log.id = #{condition.id}</if>
+           </if>
+           <if test="condition.error!=null">
+               <if test="condition.error__!=null">
+                   AND tb_log.${condition.error.field} ${condition.error.op} #{condition.error.data}
+               </if>
+               <if test="condition.error__==null"> AND tb_log.error = #{condition.error}</if>
+           </if>
+           <if test="condition.str!=null">
+               <if test="condition.str__!=null">
+                   AND tb_log.${condition.str.field} ${condition.str.op} #{condition.str.data}
+               </if>
+               <if test="condition.str__==null"> AND tb_log.str = #{condition.str}</if>
+           </if>
+           <if test="condition.url!=null">
+               <if test="condition.url__!=null">
+                   AND tb_log.${condition.url.field} ${condition.url.op} #{condition.url.data}
+               </if>
+               <if test="condition.url__==null"> AND tb_log.url = #{condition.url}</if>
+           </if>
+        </where>
+  </sql>
+
+   <sql id="queryOptions_like">
+       <where>
+		<if test="condition.id!=null">
+                AND id like CONCAT('%', #{condition.id} , '%')
+            </if>
+		<if test="condition.error!=null">
+                AND error like CONCAT('%', #{condition.error} , '%')
+            </if>
+		<if test="condition.str!=null">
+                AND str like CONCAT('%', #{condition.str} , '%')
+            </if>
+		<if test="condition.url!=null">
+                AND url like CONCAT('%', #{condition.url} , '%')
+            </if>
+        </where>
+  </sql>
+
+
+  <sql id="queryOptions_opt">
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+            <if test="condition.id!=null">
+                AND id = #{condition.id}
+            </if>
+            <if test="condition.error!=null">
+                AND error = #{condition.error}
+            </if>
+            <if test="condition.str!=null">
+                AND str = #{condition.str}
+            </if>
+            <if test="condition.url!=null">
+                AND url = #{condition.url}
+            </if>
+        </trim>
+  </sql>
+
+  <!-- 列表查询对应的排序选项  -->
+  <sql id="orderControl">
+       <if test="order!=null">
+		   	 <trim prefix="ORDER BY" suffixOverrides=",">
+						<if test="order.id!=null">
+						tb_log.id ${order.id},
+						</if>
+						<if test="order.error!=null">
+						tb_log.error ${order.error},
+						</if>
+						<if test="order.str!=null">
+						tb_log.str ${order.str},
+						</if>
+						<if test="order.url!=null">
+						tb_log.url ${order.url},
+						</if>
+			</trim>
+		  
+	   </if>
+  </sql>
+
+    <insert id="insert" parameterType="Log">
+        <selectKey keyProperty="id" resultType="Integer" order="AFTER">
+            select last_insert_id()
+        </selectKey>
+        INSERT INTO tb_log (
+				id,
+				error,
+				str,
+				url
+        ) VALUES (
+        #{id},
+        #{error},
+        #{str},
+        #{url}
+        )
+    </insert>
+
+    <!-- 更新 -->
+    <update id="update" parameterType="Log">
+        UPDATE tb_log
+		<set>
+         
+				error = #{error},
+				str = #{str},
+				url = #{url}
+         
+		</set>
+		
+		<trim prefix="WHERE" suffixOverrides="and">
+			id = #{id}
+		</trim>
+    </update>
+
+    <update id="updateByCondition">
+        UPDATE tb_log
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="update.error!=null">
+                error = #{update.error},
+            </if>
+            <if test="update.str!=null">
+                str = #{update.str},
+            </if>
+            <if test="update.url!=null">
+                url = #{update.url},
+            </if>
+        </trim>
+        <include refid="queryOptions"/>
+    </update>
+
+
+    <insert id="insertByCondition" >
+        INSERT INTO tb_log (
+            <trim suffix="" suffixOverrides=",">
+                <if test="insert.id!=null">
+                    id,
+                </if>
+                <if test="insert.error!=null">
+                    error,
+                </if>
+                <if test="insert.str!=null">
+                    str,
+                </if>
+                <if test="insert.url!=null">
+                    url
+                </if>
+            </trim>
+        ) VALUES (
+            <trim suffix="" suffixOverrides=",">
+                    <if test="insert.id!=null">
+                        #{insert.id},
+                    </if>
+                    <if test="insert.error!=null">
+                        #{insert.error},
+                    </if>
+                    <if test="insert.str!=null">
+                        #{insert.str},
+                    </if>
+                    <if test="insert.url!=null">
+                        #{insert.url}
+                    </if>
+            </trim>
+        )
+    </insert>
+
+
+    <delete id="deleteByCondition" parameterType="java.util.Map">
+        DELETE FROM tb_log
+        <include refid="queryOptions"/>
+    </delete>
+
+    <select id="queryOne" parameterType="java.util.Map" resultType="Log">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM tb_log
+		<include refid="queryOptions"/>
+		<include refid="orderControl"/>
+        LIMIT 0,1
+    </select>
+
+    <select id="queryList" resultType="Log">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM tb_log
+        <include refid="queryOptions"/>
+		<include refid="orderControl"/>
+    </select>
+
+
+    <select id="queryPage" resultType="Log">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM tb_log
+       <include refid="queryOptions" />
+
+        <include refid="orderControl"/>
+
+        <if test="offset!=null">
+            limit ${offset}, ${rows}
+        </if>
+    </select>
+
+    <select id="likePage" parameterType="java.util.Map" resultType="Log">
+        SELECT
+       
+            <include refid="Base_Column_List" />
+        FROM tb_log
+        <include refid="queryOptions_like" />
+        <include refid="orderControl" />
+		<if test="offset!=null">
+            limit ${offset}, ${rows}
+        </if>
+    </select>
+
+
+    <select id="count" resultType="java.lang.Integer">
+        SELECT count(id) FROM tb_log
+       <include refid="queryOptions_opt" />
+    </select>
+
+
+</mapper>
+
