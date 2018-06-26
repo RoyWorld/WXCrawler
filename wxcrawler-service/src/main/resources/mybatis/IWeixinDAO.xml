@@ -115,6 +115,9 @@
   </sql>
 
     <insert id="insert" parameterType="Weixin">
+        <selectKey keyProperty="id" resultType="Integer" order="AFTER">
+            select last_insert_id()
+        </selectKey>
         INSERT INTO tb_weixin (
 				id,
 				biz,

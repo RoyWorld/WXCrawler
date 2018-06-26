@@ -291,6 +291,9 @@
   </sql>
 
     <insert id="insert" parameterType="Post">
+        <selectKey keyProperty="id" resultType="Integer" order="AFTER">
+            select last_insert_id()
+        </selectKey>
         INSERT INTO tb_post (
 				id,
 				biz,
