@@ -44,13 +44,13 @@
 
                     <div align="center">
                         <ul class="pagination">
-                            <li><a href="#" title="上一页"><</a></li>
-                            <li><a href="#">1</a></li>
+                            <li ng-click="prePage()"><a href="#" title="上一页"><</a></li>
+                            <li ng-class="{active : isSelected(1)}"  ng-click="getWeixinList(1)"><a href="#">1</a></li>
+                            <li ng-if="page>2"><a href="#">...</a></li>
+                            <li ng-if="page>2 && page<total" ng-class="{active : isSelected(page)}" ng-click="getWeixinList(page)"><a href="#">{{page}}</a></li>
+                            <li ng-if="page+1<=total" ng-class="{active : isSelected(page+1)}" ng-click="getWeixinList(page+1)"><a href="#">{{page+1}}</a></li>
                             <li><a href="#">...</a></li>
-                            <li class="active"><a href="#">5</a></li>
-                            <li><a href="#">6</a></li>
-                            <li><a href="#">...</a></li>
-                            <li><a href="#" title="下一页">></a></li>
+                            <li ng-click="nextPage()"><a href="#" title="下一页">></a></li>
                         </ul>
                     </div>
                 </div>

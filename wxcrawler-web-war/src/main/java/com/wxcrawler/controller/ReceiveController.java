@@ -275,7 +275,7 @@ public class ReceiveController {
         newPost.setIsExsist(0);//set default
         iPostService.insert(newPost);
 
-        PicUtil.savePic(cover, rootPath + String.format("//%s//%s", biz, newPost.getId()), coverPic, coverPicInfo[1]);
+        PicUtil.savePic(cover, rootPath + String.format("//%s//%s", biz, newPost.getId()), coverPic, coverPicInfo[0]);
     }
 
     /**

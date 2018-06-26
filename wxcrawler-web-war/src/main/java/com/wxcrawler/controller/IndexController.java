@@ -1,13 +1,10 @@
 package com.wxcrawler.controller;
 
+import com.wxcrawler.domain.BizData4Page;
 import com.wxcrawler.service.impl.IWeixinServiceImpl;
 import com.wxcrawler.util.DecodeUtil;
 import com.wxcrawler.util.PropertiesHelper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.http.HttpOutputMessage;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,10 +18,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * Created by RoyChan on 2018/6/19.
@@ -70,17 +64,22 @@ public class IndexController {
      */
     @ResponseBody
     @RequestMapping(value = "/getWXList", method = RequestMethod.GET)
-    public List wxList(Integer page) throws UnsupportedEncodingException {
+    public BizData4Page wxList(Integer page) throws UnsupportedEncodingException {
         int pageSize = 5;
         int offset = (page - 1) * pageSize;
         int rows = pageSize;
         List<Map<String, Object>> wxList = iWeixinService.getWXList(offset, rows);
+        int count = iWeixinService.count(new HashMap<>());
         for (int i = 0; i < wxList.size(); i++) {
             Map<String, Object> wx = wxList.get(i);
             wx.put("postTitle", DecodeUtil.decodeTitle((String) wx.get("postTitle")));
             wxList.set(i, wx);
         }
-        return wxList;
+        BizData4Page bizData4Page = new BizData4Page();
+        bizData4Page.setRows(wxList);
+        int total = count % pageSize == 0 ? count/pageSize : count/pageSize + 1;
+        bizData4Page.setTotal(total);
+        return bizData4Page;
     }
 
 }

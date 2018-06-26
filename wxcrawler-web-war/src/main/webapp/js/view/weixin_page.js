@@ -62,6 +62,7 @@ modelApp.controller('modelCtrl', ['$scope', '$rootScope', '$http', '$compile', '
             }
         }).success(function (data, status) {
             $scope.postList = data.bizData.rows;
+            $scope.total = data.bizData.total;
         });
     }
 
