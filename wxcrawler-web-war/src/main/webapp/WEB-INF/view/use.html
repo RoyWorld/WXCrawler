@@ -1,0 +1,41 @@
+#parse("/header.html")
+
+<div id="root" class="root" ng-app="modelApp" ng-controller="modelCtrl" >
+    <div class="page-page" style="margin: 0px 300px;" scroll>
+        <div class="hy-ability">
+            <div class="hy-ability-item">
+                <div class="circle">
+                    <div class="word">
+                        <a href="/index">看</a>
+                    </div>
+                </div>
+            </div>
+            <div class="hy-ability-item">
+                <div class="circle">
+                    <div class="word">
+                        <a href="/query">查</a>
+                    </div>
+                </div>
+            </div>
+            <div class="hy-ability-item">
+                <div class="circle active">
+                    <div class="word active">
+                        <a href="/use">用</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="feed-list">
+            <div class="card-block ">
+                <div>
+                    <div style="text-align: center;font-size: 149px;">404</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+#include("./footer.html")
+
+<script src="/js/view/index.js"></script>
