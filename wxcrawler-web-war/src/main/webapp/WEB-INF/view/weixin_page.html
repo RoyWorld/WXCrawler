@@ -57,6 +57,7 @@
                             <li ng-if="page>2 "><a href="#">...</a></li>
                             <li ng-if="page>2 && page<total" ng-class="{active : isSelected(page)}" ng-click="getPostList(page)"><a href="#">{{page}}</a></li>
                             <li ng-if="page+1<=total" ng-class="{active : isSelected(page+1)}" ng-click="getPostList(page+1)"><a href="#">{{page+1}}</a></li>
+                            <li ng-if="page>total" ng-class="{active : isSelected(page)}" ng-click="getPostList(total)"><a href="#">{{total}}</a></li>
                             <li><a href="#">...</a></li>
                             <li ng-click="nextPage()"><a href="#" title="下一页">></a></li>
                         </ul>

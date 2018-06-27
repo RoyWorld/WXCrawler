@@ -10,7 +10,7 @@ modelApp.directive("scroll", function ($window, $http) {
     return {
         link: function(scope) {
             angular.element($window).bind("wheel", function() {
-                if (scope.page % 4 != 0) {
+                if (scope.page % 4 != 0 && scope.page < scope.total && scope.canScroll) {
                     scope.page++;
                     $http({
                         method: 'get',
@@ -19,8 +19,11 @@ modelApp.directive("scroll", function ($window, $http) {
                             contentType: 'application/json;charset=UTF-8'
                         }
                     }).success(function (data, status) {
-                        scope.postList = scope.postList.concat(data.bizData.rows);
-                        scope.$apply();
+                        if (data.bizData.rows.length != []){
+                            scope.weixinList = scope.weixinList.concat(data.bizData.rows);
+                        }else {
+                            scope.canScroll = false;
+                        }
                     });
                 }
             });
@@ -33,6 +36,7 @@ modelApp.controller('modelCtrl', ['$scope', '$rootScope', '$http', '$compile', '
     $scope.page = 1;
     $scope.weixinList = [];
     $scope.postFilePath = $('#postFilePath').val();
+    $scope.canScroll = true;
 
     $scope.prePage = function () {
         $scope.page--;
@@ -50,6 +54,7 @@ modelApp.controller('modelCtrl', ['$scope', '$rootScope', '$http', '$compile', '
 
     $scope.getWeixinList = function (page){
         $scope.page = page;
+        $scope.canScroll = true;
         $http({
             method: 'get',
             url: modelUrl + "/getWXList?biz=" + $scope.biz + "&page=" + page,
@@ -57,7 +62,7 @@ modelApp.controller('modelCtrl', ['$scope', '$rootScope', '$http', '$compile', '
                 contentType: 'application/json;charset=UTF-8'
             }
         }).success(function (data, status) {
-            $scope.postList = data.bizData.rows;
+            $scope.weixinList = data.bizData.rows;
         });
     }
 
