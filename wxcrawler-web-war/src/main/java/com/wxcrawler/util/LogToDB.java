@@ -15,7 +15,12 @@ public class LogToDB {
     ILogServiceImpl iLogService;
 
     public void insertLog(Exception e, String url){
-        Log log = new Log(e.getMessage(), e.getCause().toString(), url);
+        Log log = new Log(e.toString(), e.getStackTrace()[0].toString(), url);
+        iLogService.insert(log);
+    }
+
+    public void insertLog(Exception e, String str, String url){
+        Log log = new Log(e.toString(), str, url);
         iLogService.insert(log);
     }
 }

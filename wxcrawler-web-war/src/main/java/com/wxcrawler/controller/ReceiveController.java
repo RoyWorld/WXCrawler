@@ -58,7 +58,8 @@ public class ReceiveController {
     private String key;
     private String pass_ticket;
 
-    Pattern jsonErrorPattern = Pattern.compile("(?<=title\":\")[^\"]{0,10}\"[^\"]{0,10}\"");
+    Pattern jsonTitleErrorPattern = Pattern.compile("(?<=title\":\")[^\"]{0,10}\"[^\"]{0,10}\"");
+    Pattern jsonDigestErrorPattern = Pattern.compile("(?<=digest\":\")[^\"]{0,30}\"[^\"]{0,10}");
 
     private String rootPath = "E:\\公众号";
 
@@ -88,16 +89,23 @@ public class ReceiveController {
             try{
                 json = (JSONObject) JSONArray.parse(str);
             }catch (JSONException e){
-                logToDB.insertLog(e, url);
+                logToDB.insertLog(e, str, url);
 
                 String jsonRex = "";
-                Matcher jsonRexMatch = jsonErrorPattern.matcher(str);
-                if (jsonRexMatch.find()){
-                    jsonRex = jsonRexMatch.group();
+                Matcher jsonTitleRexMatch = jsonTitleErrorPattern.matcher(str);
+                if (jsonTitleRexMatch.find()){
+                    jsonRex = jsonTitleRexMatch.group();
+                    jsonRex = jsonRex.replaceAll("\"", "");
+                    str = str.replaceAll("(?<=title\":\")[^\"]{0,10}\"[^\"]{0,10}\"", jsonRex);
                 }
-                jsonRex = jsonRex.substring(1, jsonRex.length()-1);
 
-                str = str.replaceAll("(?<=title\":\")[^\"]{0,10}\"[^\"]{0,10}\"", jsonRex);
+                Matcher jsonDigestRexMatch = jsonDigestErrorPattern.matcher(str);
+                if (jsonDigestRexMatch.find()){
+                    jsonRex = jsonDigestRexMatch.group();
+                    jsonRex = jsonRex.replaceAll("\"", "");
+                    str = str.replaceAll("(?<=digest\":\")[^\"]{0,30}\"[^\"]{0,10}", jsonRex);
+                }
+
                 json = (JSONObject) JSONArray.parse(str);
             }
 
@@ -206,6 +214,7 @@ public class ReceiveController {
             weixin = new Weixin();
             weixin.setBiz(biz);
             weixin.setCollect((int) (System.currentTimeMillis()/1000));
+            weixin.setStatus(1);
             iWeixinService.insert(weixin);
         }
     }

@@ -27,7 +27,6 @@ import java.util.*;
 @RequestMapping(value = "/index")
 public class IndexController {
 
-//    public static final String postFilePath = "E:\\公众号";
     public static final String postFilePath = (String) PropertiesHelper.getPropertiesFromResource().get("postFilePath");
 
     @Autowired
