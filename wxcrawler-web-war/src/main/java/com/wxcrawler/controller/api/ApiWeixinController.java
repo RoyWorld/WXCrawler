@@ -2,7 +2,7 @@
  * Copyright (c) 2013-2014, thinkjoy Inc. All Rights Reserved.
  *
  * Project Name: wxcrawler
- * $Id:  WeixinController.java 2018-06-12 10:34:50 $
+ * $Id:  WeixinController.java 2018-06-28 10:48:30 $
  */
 
 package com.wxcrawler.controller.api;
@@ -141,6 +141,9 @@ public class ApiWeixinController{
             if(weixin.getCollect() != null){
                 weixin_old.setCollect(weixin.getCollect());
             }
+            if(weixin.getStatus() != null){
+                weixin_old.setStatus(weixin.getStatus());
+            }
 
 
             int row = weixinServiceImpl.update(weixin_old);
@@ -215,6 +218,9 @@ public class ApiWeixinController{
             }
             if(weixin.getCollect() != null){
                 whereParams.put("collect", new SearchField("collect", "=", weixin.getCollect()));
+            }
+            if(weixin.getStatus() != null){
+                whereParams.put("status", new SearchField("status", "=", weixin.getStatus()));
             }
 
 

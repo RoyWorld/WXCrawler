@@ -2,7 +2,7 @@
  * Copyright (c) 2013-2014, thinkjoy Inc. All Rights Reserved.
  *
  * Project Name: wxcrawler
- * $Id:  Weixin.java 2018-06-12 10:34:50 $
+ * $Id:  Weixin.java 2018-06-28 10:48:30 $
  */
 
 
@@ -41,6 +41,10 @@ public class Weixin extends MyBaseDomain<Integer>{
 
     /** 记录采集时间的时间戳 */
     private Integer collect;
+
+
+    /** 状态，0：软删除，1：启用 */
+    private Integer status;
 
 
 	public Weixin(){
@@ -120,6 +124,21 @@ public class Weixin extends MyBaseDomain<Integer>{
         return this.collect;
     }
 
+	/**
+	 *状态，0：软删除，1：启用
+	 * @param value
+	 */
+	public void setStatus(Integer value) {
+        this.status = value;
+    }
+	/**
+	 *状态，0：软删除，1：启用
+	 * @return
+	 */
+    public Integer getStatus() {
+        return this.status;
+    }
+
 
 	public String toString() {
 		return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
@@ -128,6 +147,7 @@ public class Weixin extends MyBaseDomain<Integer>{
 			.append("NickName",getNickName())
 			.append("Avatar",getAvatar())
 			.append("Collect",getCollect())
+			.append("Status",getStatus())
 			.toString();
 	}
 
