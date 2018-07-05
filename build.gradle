@@ -75,7 +75,7 @@ task "copytest" << {
 }
 
 task createREADME() {
-    file("README.md").createNewFile()
+    file("readme.md").createNewFile()
 }
 
 subprojects {
