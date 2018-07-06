@@ -1,15 +1,17 @@
 # Project Description
 这个项目是一个公众号文章爬取项目，目的是提供一个本地的公众号文章收藏和浏览工具，可以将线上的文章本地化，有利于快速查找和浏览，同时也可以防止好文章被删除，往后无法查看的问题。
 
+而项目的爬取方式是基于一个[知乎专栏][R2]的内容进行改写，该专栏使用的是`python`和`django`做后台服务，而这个项目是改用`Java web`的方式去做后台服务，而具体的实现方式和处理逻辑可以参照专栏，这里只给出这个项目的实现方式。
+
 # About Project
-## project structure
+### project structure
 由于要做一个可供浏览阅读的界面，而浏览界面需要兼容多个系统，所以这个项目做成了BS架构，服务的技术架构如下：
 * 后台框架：Spring+SpringMVC+Mybatis
 * 数据库：MongoDB+Mysql
 * 前端页面：bootstrap+velocity+angularjs
 * 数据转发：anyproxy
 
-## DataBase
+### DataBase
 项目里运用了两种不同的数据库，一个是关系型数据库Mysql，另一个是非关系型数据库MongoDB，用途如下：
 * Mysql
 Mysql的作用是保存公众号和文章信息，项目中的表结构如下：
@@ -77,21 +79,38 @@ Anyproxy是一个抓包工具，用途是抓取公众号和文章的相关数据
 
 Anyproxy的相关信息和技术指南可查看这个链接：http://anyproxy.io
 
-Anyproxy的转发功能是自行修改文件rule_default.js实现的，具体代码参考这个[文件][R1]
+Anyproxy的转发功能是自行修改文件`rule_default.js`实现的，具体代码参考这个[文件][R1]
 
-## how to use
+### how to use
+本机web访问地址：**http://localhost:8887/index**
+* 公众号列表查看
+
+![pic1](https://raw.githubusercontent.com/RoyWorld/WXCrawler/master/wxcrawler-web-war/src/main/resources/images/pic1.png)
+
+* 文章列表查看
+
+![pic2](https://raw.githubusercontent.com/RoyWorld/WXCrawler/master/wxcrawler-web-war/src/main/resources/images/pic2.png)
+
+* 文章查看
+
+![pic3](https://raw.githubusercontent.com/RoyWorld/WXCrawler/master/wxcrawler-web-war/src/main/resources/images/pic3.png)
+
+# technic-problem
 
 
 # project version
 ## v1.0.1
 目前已实现的功能
-* 根据数据库中的表生成相关数据
-* 可配置数据的生成类
-* 能够并发生成数据
+* 爬取历史公众号历史文章
+* 爬取公众号最新文章
+* 本地文章查看
+* 按文章标题和内容搜索文章
 
 待优化和增加的功能
-* 优化配置数据生成类的设计
-* 优化并发生成数据的速度
-* 增加生成数据的进度日志打印功能
+* 优化历史文章爬取速度
+* 优化更新新文章的流程
+* 优化搜素结果
+* 实现爬取可配置
 
 [R1]: https://raw.githubusercontent.com/RoyWorld/WXCrawler/master/wxcrawler-web-war/src/main/webapp/js/rule_default.js
+[R2]: https://zhuanlan.zhihu.com/c_65943221
