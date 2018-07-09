@@ -11,7 +11,7 @@
 * 前端页面：bootstrap+velocity+angularjs
 * 数据转发：anyproxy
 
-### DataBase
+### database
 项目里运用了两种不同的数据库，一个是关系型数据库Mysql，另一个是非关系型数据库MongoDB，用途如下：
 * Mysql
 Mysql的作用是保存公众号和文章信息，项目中的表结构如下：
@@ -72,7 +72,7 @@ MongoDB的作用是保存文章的标题和内容，方便做后台文章搜索�
 }
 ```
 
-### Anyproxy
+### anyproxy
 Anyproxy是一个抓包工具，用途是抓取公众号和文章的相关数据，并将数据转发到后台中。这实质上是利用了中间人攻击的原理，将微信客户端浏览公众号的页面信息转发到后台后，再返回到微信客户端中。
 
 ![Project Structure](https://raw.githubusercontent.com/RoyWorld/WXCrawler/master/wxcrawler-web-war/src/main/resources/images/proxy.png)
@@ -81,7 +81,9 @@ Anyproxy的相关信息和技术指南可查看这个链接：http://anyproxy.io
 
 Anyproxy的转发功能是自行修改文件`rule_default.js`实现的，具体代码参考这个[文件][R1]
 
-### how to use
+### article file
+
+# How to use
 本机web访问地址：**http://localhost:8887/index**
 * 公众号列表查看
 
@@ -95,11 +97,72 @@ Anyproxy的转发功能是自行修改文件`rule_default.js`实现的，具体�
 
 ![pic3](https://raw.githubusercontent.com/RoyWorld/WXCrawler/master/wxcrawler-web-war/src/main/resources/images/pic3.png)
 
-# technic-problem
+* 文章爬取
+1. 设置Anyproxy作为网络代理，其中需要安装https证书
+2. 安装微信客户端，并登录相关账号
+3. 点击打开要爬取的公众号
+4. 等待程序自动爬取文章数据
+
+# Technic-problem
+### save article
+爬虫爬取的时候仅爬取文章中的主要内容，所以最后保存的html在代码上看是不完整的。文章中的图片也是直接保存到本地中的，所以在本地中是可以直接查看文章的完整内容（带音频的文章暂时没试过）。
+
+文件保存的方式：
+* 根目录：在`project.properties`中做配置的
+
+* 文件保存的路径：`/{weixinId}/{postId}`
+
+* 文件的命名：html是以postId来命名的，图片是按原有的Id来命名的
+
+### read article
+文章内容是直接爬取公众号的内容到本地html中，而web服务是有浏览本地文件的功能，所以需要做本地文件的浏览，相关代码如下：
+```java
+/**
+* 浏览访问本地的图片
+*/
+@RequestMapping(value = "/avatar/{biz}/{avatar}" , method = RequestMethod.GET)
+public void getAvatar(@PathVariable("biz") String biz, @PathVariable("avatar") String avatar, HttpServletResponse response) throws IOException {
+    byte[] bytes = Files.readAllBytes(Paths.get(postFilePath + "\\" + biz + "\\" + avatar));
+    response.setCharacterEncoding("UTF-8");
+    response.setContentType("image/*;charset=UTF-8");
+    OutputStream out = response.getOutputStream();
+    out.write(bytes);
+    out.close();
+}
+```
+
+```java
+/**
+ * 查看本地文章
+ */
+@RequestMapping(value = "/openPost/{biz}/{post}", method = RequestMethod.GET)
+public ModelAndView openPost(@PathVariable("biz") String biz, @PathVariable("post") String post, HttpServletRequest request) throws IOException {
+    byte[] bytes = Files.readAllBytes(Paths.get(postFilePath + "\\" + biz + "\\" + post+ "\\" + post + ".html"));
+    String content_Str = new String(bytes);
+    content_Str = replaceTextOfMatchGroup(content_Str, picsrcPattern, 0, srcStr -> {
+        int index = srcStr.indexOf("=");
+        String picUrl = srcStr.substring(index + 2, srcStr.length() - 1);
+        //将src中的图片链接替换成本地图片链接
+        srcStr = srcStr.replaceAll("(?<=src\\=\\\").*(?=\\\")", String.format("/index/weixin/postImg/%s/%s/%s/", biz, post, picUrl));
+        return srcStr;
+    });
+
+    HttpSession session = request.getSession();
+    ServletContext sc = session.getServletContext();
+    String path = sc.getRealPath("/");
+    ResourceLoader resourceLoader = new DefaultResourceLoader();
+    Resource resource = resourceLoader.getResource("file:" + path + "/WEB-INF/view/article.html");
+    //将本地文件写到article中
+    FileOutputStream outputStreamWriter = new FileOutputStream(resource.getFile());
+    outputStreamWriter.write(content_Str.getBytes());
+    ModelAndView modelAndView = new ModelAndView("post");
+    return modelAndView;
+}
+```
 
 
-# project version
-## v1.0.1
+# Project Version
+### v1.0.1
 目前已实现的功能
 * 爬取历史公众号历史文章
 * 爬取公众号最新文章
@@ -111,6 +174,9 @@ Anyproxy的转发功能是自行修改文件`rule_default.js`实现的，具体�
 * 优化更新新文章的流程
 * 优化搜素结果
 * 实现爬取可配置
+
+# reference
+* [https://zhuanlan.zhihu.com/c_65943221][R2]
 
 [R1]: https://raw.githubusercontent.com/RoyWorld/WXCrawler/master/wxcrawler-web-war/src/main/webapp/js/rule_default.js
 [R2]: https://zhuanlan.zhihu.com/c_65943221
