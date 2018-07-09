@@ -43,7 +43,7 @@ public class PostCrawler {
     //正则匹配获取公众号头像
     private Pattern headImgPattern = Pattern.compile("(?<=var\\sround_head_img\\s=\\s\").*(?=\")");
 
-    private String rootPath = "E:\\公众号";
+    private String rootPath = PropertiesHelper.getPropertiesFromResource().getProperty("postFilePath");
 
     @Autowired
     IWeixinServiceImpl iWeixinService;

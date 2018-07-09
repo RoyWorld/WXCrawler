@@ -12,6 +12,7 @@ import com.wxcrawler.service.impl.ITmplistServiceImpl;
 import com.wxcrawler.service.impl.IWeixinServiceImpl;
 import com.wxcrawler.util.LogToDB;
 import com.wxcrawler.util.PicUtil;
+import com.wxcrawler.util.PropertiesHelper;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +62,7 @@ public class ReceiveController {
     Pattern jsonTitleErrorPattern = Pattern.compile("(?<=title\":\")[^\"]{0,10}\"[^\"]{0,10}\"");
     Pattern jsonDigestErrorPattern = Pattern.compile("(?<=digest\":\")[^\"]{0,30}\"[^\"]{0,10}");
 
-    private String rootPath = "E:\\公众号";
+    private String rootPath = PropertiesHelper.getPropertiesFromResource().getProperty("postFilePath");
 
     @ResponseBody
     @RequestMapping(value = "/getMsgJson", method = RequestMethod.POST)

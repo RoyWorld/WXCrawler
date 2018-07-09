@@ -47,7 +47,7 @@ public class WeixinController {
     @Autowired
     IPostServiceImpl iPostService;
 
-    public static final String postFilePath = (String) PropertiesHelper.getPropertiesFromResource().get("postFilePath");
+    public static final String postFilePath = PropertiesHelper.getPropertiesFromResource().getProperty("postFilePath");
 
     @RequestMapping(value = "/openWeixin", method = RequestMethod.GET)
     public ModelAndView openWeixin(String biz, String avatar, String name) throws UnsupportedEncodingException {

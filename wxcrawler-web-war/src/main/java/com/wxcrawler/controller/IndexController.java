@@ -27,7 +27,7 @@ import java.util.*;
 @RequestMapping(value = "/index")
 public class IndexController {
 
-    public static final String postFilePath = (String) PropertiesHelper.getPropertiesFromResource().get("postFilePath");
+    public static final String postFilePath = PropertiesHelper.getPropertiesFromResource().getProperty("postFilePath");
 
     @Autowired
     IWeixinServiceImpl iWeixinService;
