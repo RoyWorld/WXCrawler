@@ -81,8 +81,6 @@ Anyproxy的相关信息和技术指南可查看这个链接：http://anyproxy.io
 
 Anyproxy的转发功能是自行修改文件`rule_default.js`实现的，具体代码参考这个[文件][R1]
 
-### article file
-
 # How to use
 本机web访问地址：**http://localhost:8887/index**
 * 公众号列表查看
@@ -159,6 +157,18 @@ public ModelAndView openPost(@PathVariable("biz") String biz, @PathVariable("pos
     return modelAndView;
 }
 ```
+
+### log
+项目中的日志有两种记录方式，一种是用logback记录的，这种是记录运行时的日志，另一种是将爬取的错误信息记录到数据库中。
+* 爬虫日志
+
+爬虫日志是直接输出到控制台上的，这其中是用到了Spring aop做日志的输出。
+
+项目中的aop主要是用`LoggerAspect`去实现日志的输出，用`LogAfter`和`LogBefore`两个注解类去做方法的aop，从爬取的开始到结束都会输出相关的日志。
+
+* 错误日志
+
+错误日志是在try-catch中做处理的，所以只有在try-catch中捕获的错误信息才会被记录到Mysql中。而没有被捕获的信息和直接外抛的异常都不会被记录到Mysql中，而是直接输出到控制台上，所以对于一些突发的运行时错误会有错误定位的问题。
 
 
 # Project Version
