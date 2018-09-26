@@ -17,11 +17,6 @@ import java.io.PrintWriter;
 public class TestController {
 
 
-    @RequestMapping(value = "/index", method = RequestMethod.GET)
-    public ModelAndView index() {
-        return new ModelAndView("index");
-    }
-
     @RequestMapping(value = "/query", method = RequestMethod.GET)
     public ModelAndView query() {
         return new ModelAndView("query");
